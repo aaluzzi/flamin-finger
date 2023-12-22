@@ -9,6 +9,7 @@ html,body {
 
 canvas {
     border-radius: 2%;
+    border: 1vmin solid black;
     height: 90vmin;
     aspect-ratio: 1;
     background-color: black;

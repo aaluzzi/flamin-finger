@@ -1,5 +1,5 @@
-const ROWS = 35;
-const COLS = 35;
+const ROWS = 18;
+const COLS = 18;
 
 export const EMPTY = 0;
 export const WALL = 1;
