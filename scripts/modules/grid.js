@@ -4,16 +4,17 @@ const COLS = 18;
 export const EMPTY = 0;
 export const WALL = 1;
 export const PATH = 2;
+export const PATH_TAKEN = 3;
 
 export function generatePath() {
     let grid = Array.from({ length: ROWS * 2 + 1 }, () => Array(COLS * 2 + 1).fill(EMPTY));
     let visited = Array.from({ length: ROWS}, () => Array(COLS).fill(false));
-    let current = {x: 0, y: 0};
+    let current = {x: 0, y: ROWS - 1};
     let path = [];
 
     grid[current.x * 2 + 1][current.y * 2 + 1] = PATH;
 
-    while (current.x !== ROWS - 1 || current.y !== COLS - 1) {
+    while (current.x !== ROWS - 1 || current.y !== 0) {
         let neighbors = getEmptyNeighbors(current.x, current.y, grid, visited);
         if (neighbors.length > 0) {
             let randomNeighbor = neighbors[Math.floor(Math.random() * neighbors.length)];
@@ -67,7 +68,7 @@ export function generatePath() {
         surroundWithWalls(square.x, square.y, grid);
     }
 
-    return grid;
+    return {grid, path};
 }
 
 function surroundWithWalls(x, y, grid) {
