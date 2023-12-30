@@ -1,20 +1,26 @@
-import { drawGrid } from "./modules/graphics.js";
+import { drawGrid, drawTimer } from "./modules/graphics.js";
 import { PATH_TAKEN, generatePath } from "./modules/grid.js";
 
 const {grid, path} = generatePath();
 let pathIndex = 0;
 let status = "waiting";
 
+
+
 let run = function() {
     drawGrid(grid);
+    if (status === "started") { //TODO get around if statement
+        drawTimer(timerLengthSeconds - ((Date.now() - gameStartTime) / 1000));
+    }
 }
+
 
 let gameIntervalId;
 let gameTimerId;
 let gameStartTime;
-let timerLengthSeconds = path.length / 10;
+let timerLengthSeconds = path.length / 15;
 
-gameIntervalId = setInterval(run, 1000 / 120);
+gameIntervalId = setInterval(run, 1000 / 60);
 
 function start() {
     status = "started";

@@ -12,6 +12,13 @@ export function generatePath() {
     let current = {x: 1, y: grid.length - 2}; //account for the outer walls
     let path = [];
 
+    //prevent from generating on timer area
+    for (let x = 15; x < 22; x++) {
+        for (let y = 17; y < 20; y++) {
+            visited[x][y] = true;
+        }
+    }
+
     grid[current.x][current.y] = PATH_TAKEN;
 
     while (current.x !== grid[0].length - 2 || current.y !== 1) {
