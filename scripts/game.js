@@ -27,7 +27,7 @@ function drawGrid(grid) {
                 drawCircle(SQUARE_SIZE * row + SQUARE_SIZE / 2, SQUARE_SIZE * col + SQUARE_SIZE / 2, SQUARE_SIZE / 4, "yellow");
             } else if (grid[row][col] === PATH_TAKEN) {
                 drawCircle(SQUARE_SIZE * row + SQUARE_SIZE / 2, SQUARE_SIZE * col + SQUARE_SIZE / 2, SQUARE_SIZE / 4, "red");
-            }
+            } 
         }
     }
 }
@@ -40,9 +40,10 @@ function drawCircle(x, y, width, color) {
 }
 
 canvas.addEventListener('mousemove', e => {
-    let row = Math.floor(e.offsetX / canvas.width * grid.length);
-    let col = Math.floor(e.offsetY / canvas.height * grid.length);
-    if (grid[row][col] === PATH) {
-        grid[row][col] = PATH_TAKEN;
+    let gridX = Math.floor(e.offsetX / canvas.width * grid.length);
+    let gridY = Math.floor(e.offsetY / canvas.height * grid.length);
+    if (grid[gridX][gridY] === PATH && path[pathIndex].x === gridX && path[pathIndex].y === gridY) {
+        grid[gridX][gridY] = PATH_TAKEN;
+        pathIndex++;
     }
 })

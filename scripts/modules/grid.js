@@ -8,108 +8,92 @@ export const PATH_TAKEN = 3;
 
 export function generatePath() {
     let grid = Array.from({ length: ROWS * 2 + 1 }, () => Array(COLS * 2 + 1).fill(EMPTY));
-    let visited = Array.from({ length: ROWS}, () => Array(COLS).fill(false));
-    let current = {x: 0, y: ROWS - 1};
+    let visited = Array.from({ length: ROWS * 2 + 1}, () => Array(COLS * 2 + 1).fill(false));
+    let current = {x: 1, y: grid.length - 2}; //account for the outer walls
     let path = [];
 
-    grid[current.x * 2 + 1][current.y * 2 + 1] = PATH;
+    grid[current.x][current.y] = PATH;
 
-    while (current.x !== ROWS - 1 || current.y !== 0) {
-        let neighbors = getEmptyNeighbors(current.x, current.y, grid, visited);
+    while (current.x !== grid[0].length - 2 || current.y !== 1) {
+        let neighbors = getEmptyNeighbors(current, grid, visited);
         if (neighbors.length > 0) {
             let randomNeighbor = neighbors[Math.floor(Math.random() * neighbors.length)];
     
-            grid[randomNeighbor.x * 2 + 1][randomNeighbor.y * 2 + 1] = PATH;
+            grid[randomNeighbor.x][randomNeighbor.y] = PATH;
             
             //Fill square in between
+            path.push(current);
             if (randomNeighbor.x > current.x) {
-                grid[randomNeighbor.x * 2][randomNeighbor.y * 2 + 1] = PATH;
+                grid[current.x + 1][current.y] = PATH;
+                path.push({x: current.x + 1, y: current.y});
             }
-            if (randomNeighbor.x < current.x) {
-                grid[current.x * 2][current.y * 2 + 1] = PATH;
+            else if (randomNeighbor.x < current.x) {
+                grid[current.x - 1][current.y] = PATH;
+                path.push({x: current.x - 1, y: current.y})
             }
-            if (randomNeighbor.y > current.y) {
-                grid[randomNeighbor.x * 2 + 1][randomNeighbor.y * 2] = PATH;
+            else if (randomNeighbor.y > current.y) {
+                grid[current.x][current.y + 1] = PATH;
+                path.push({x: current.x, y: current.y + 1});
             }
-            if (randomNeighbor.y < current.y) {
-                grid[current.x * 2 + 1][current.y * 2] = PATH;
+            else if (randomNeighbor.y < current.y) {
+                grid[current.x][current.y - 1] = PATH;
+                path.push({x: current.x, y: current.y - 1});
             }
     
-            path.push(current);
             current = randomNeighbor;
             visited[randomNeighbor.x][randomNeighbor.y] = true;
-          
         } else {
             //empty current
-            grid[current.x * 2 + 1][current.y * 2 + 1] = EMPTY;
+            grid[current.x][current.y] = EMPTY;
 
             let previous = path.pop();
+            grid[previous.x][previous.y] = EMPTY;
 
-            if (previous.x > current.x) {
-                grid[previous.x * 2][previous.y * 2 + 1] = EMPTY;
-            }
-            if (previous.x < current.x) {
-                grid[current.x * 2][current.y * 2 + 1] = EMPTY;
-            }
-            if (previous.y > current.y) {
-                grid[previous.x * 2 + 1][previous.y * 2] = EMPTY;
-            }
-            if (previous.y < current.y) {
-                grid[current.x * 2 + 1][current.y * 2] = EMPTY;
-            }
-
-            current = previous;
+            current = path.pop();
         }
     }
     path.push(current);
 
     //Fill in walls
     for (const square of path) {
-        surroundWithWalls(square.x, square.y, grid);
+        surroundWithWalls(square, grid);
     }
 
     return {grid, path};
 }
 
-function surroundWithWalls(x, y, grid) {
-    grid[x * 2][y * 2] = WALL;
-    if (grid[x * 2][y * 2 + 1] === EMPTY) {
-        grid[x * 2][y * 2 + 1] = WALL;
+function surroundWithWalls(current, grid) {
+    if (grid[current.x + 1][current.y] === EMPTY) {
+        grid[current.x + 1][current.y] = WALL;
+        grid[current.x + 1][current.y + 1] = WALL;
+        grid[current.x + 1][current.y - 1] = WALL;
     }
-    grid[x * 2][y * 2 + 2] = WALL;
-
-    if (grid[x * 2 + 1][y * 2] === EMPTY) {
-        grid[x * 2 + 1][y * 2] = WALL;
+    if (grid[current.x - 1][current.y] === EMPTY) {
+        grid[current.x - 1][current.y] = WALL;
+        grid[current.x - 1][current.y + 1] = WALL;
+        grid[current.x - 1][current.y - 1] = WALL;
     }
-
-    if (grid[x * 2 + 1][y * 2 + 2] === EMPTY) {
-        grid[x * 2 + 1][y * 2 + 2] = WALL;
-    } 
-
-    grid[x * 2 + 2][y * 2] = WALL;
-    if (grid[x * 2 + 2][y * 2 + 1] === EMPTY) {
-        grid[x * 2 + 2][y * 2 + 1] = WALL;
+    if (grid[current.x][current.y + 1] === EMPTY) {
+        grid[current.x][current.y + 1] = WALL;
     }
-    grid[x * 2 + 2][y * 2 + 2] = WALL;
+    if (grid[current.x][current.y - 1] === EMPTY) {
+        grid[current.x][current.y - 1] = WALL;
+    }
 }
 
-function getEmptyNeighbors(x, y, grid, visited) {
+function getEmptyNeighbors(current, grid, visited) {
     let neighbors = [];
-    if (x > 0 && getSquareAt(x - 1, y, grid) === EMPTY && !visited[x - 1][y]) {
-        neighbors.push({x: x - 1, y: y});
+    if (current.x > 1 && grid[current.x - 2][current.y] === EMPTY && !visited[current.x - 2][current.y]) {
+        neighbors.push({x: current.x - 2, y: current.y});
     }
-    if (x < ROWS - 1 && getSquareAt(x + 1, y, grid) === EMPTY && !visited[x + 1][y]) {
-        neighbors.push({x: x + 1, y: y});
+    if (current.x < grid.length - 2 && grid[current.x + 2][current.y] === EMPTY && !visited[current.x + 2][current.y]) {
+        neighbors.push({x: current.x + 2, y: current.y});
     }
-    if (y > 0 && getSquareAt(x, y - 1, grid) === EMPTY && !visited[x][y - 1]) {
-        neighbors.push({x: x, y: y - 1});
+    if (current.y > 1 && grid[current.x][current.y - 2] === EMPTY && !visited[current.x][current.y - 2]) {
+        neighbors.push({x: current.x, y: current.y - 2});
     }
-    if (y < COLS - 1 && getSquareAt(x, y + 1, grid) === EMPTY && !visited[x][y + 1]) {
-        neighbors.push({x: x, y: y + 1});
+    if (current.y < grid[current.x].length - 2 && grid[current.x][current.y + 2] === EMPTY && !visited[current.x][current.y + 2]) {
+        neighbors.push({x: current.x, y: current.y + 2});
     }
     return neighbors;
-}
-
-function getSquareAt(x, y, grid) {
-    return grid[x * 2 + 1][y * 2 + 1];
 }
