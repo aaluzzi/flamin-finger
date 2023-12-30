@@ -1,4 +1,4 @@
-import { PATH_TAKEN, PATH, WALL, generatePath } from "./modules/grid.js";
+import { PATH_TAKEN, WALL, generatePath } from "./modules/grid.js";
 
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
@@ -8,7 +8,7 @@ canvas.height = canvas.offsetHeight;
 
 const {grid, path} = generatePath();
 let pathIndex = 0;
-let status = "ended";
+let status = "waiting";
 
 const SQUARE_SIZE = canvas.width / grid.length;
 
@@ -17,17 +17,36 @@ let run = function() {
 }
 
 let gameIntervalId;
+let gameTimerId;
+let gameStartTime;
+let timerLengthSeconds = path.length / 10;
 
 gameIntervalId = setInterval(run, 1000 / 120);
+
+function start() {
+    status = "started";
+    gameStartTime = Date.now();
+    gameTimerId = setTimeout(lose, timerLengthSeconds * 1000);
+}
+
+function win() {
+    status = "ended";
+    console.log("win");
+    clearTimeout(gameTimerId);
+}
+
+function lose() {
+    status = "ended";
+    console.log("lost");
+}
 
 function traversePath() {
     grid[path[pathIndex].x][path[pathIndex].y] = PATH_TAKEN;
     
     if (pathIndex === 0) {
-        status = "started";
+        start();
     } else if (pathIndex === path.length - 1) {
-        status = "ended";
-        console.log("win");
+        win();
         return;
     }
     pathIndex++;
@@ -55,7 +74,7 @@ function drawCircle(x, y, width, color) {
 canvas.addEventListener('mousemove', e => {
     let gridX = e.offsetX / canvas.width * grid.length;
     let gridY = e.offsetY / canvas.height * grid.length;
-    if (Math.abs(path[pathIndex].x - gridX) < 1 && Math.abs(path[pathIndex].y - gridY) < 1) {
+    if (Math.abs(path[pathIndex].x - gridX) < 1 && Math.abs(path[pathIndex].y - gridY) < 1 && status !== "ended") {
        traversePath();
     }
 })
