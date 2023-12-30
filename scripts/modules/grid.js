@@ -12,7 +12,7 @@ export function generatePath() {
     let current = {x: 1, y: grid.length - 2}; //account for the outer walls
     let path = [];
 
-    grid[current.x][current.y] = PATH;
+    grid[current.x][current.y] = PATH_TAKEN;
 
     while (current.x !== grid[0].length - 2 || current.y !== 1) {
         let neighbors = getEmptyNeighbors(current, grid, visited);

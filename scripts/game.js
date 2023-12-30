@@ -8,6 +8,7 @@ canvas.height = canvas.offsetHeight;
 
 const {grid, path} = generatePath();
 let pathIndex = 0;
+let status = "ended";
 
 const SQUARE_SIZE = canvas.width / grid.length;
 
@@ -18,6 +19,19 @@ let run = function() {
 let gameIntervalId;
 
 gameIntervalId = setInterval(run, 1000 / 120);
+
+function traversePath() {
+    grid[path[pathIndex].x][path[pathIndex].y] = PATH_TAKEN;
+    
+    if (pathIndex === 0) {
+        status = "started";
+    } else if (pathIndex === path.length - 1) {
+        status = "ended";
+        console.log("win");
+        return;
+    }
+    pathIndex++;
+}
 
 function drawGrid(grid) {
     for (let row = 0; row < grid.length; row++) {
@@ -42,7 +56,6 @@ canvas.addEventListener('mousemove', e => {
     let gridX = e.offsetX / canvas.width * grid.length;
     let gridY = e.offsetY / canvas.height * grid.length;
     if (Math.abs(path[pathIndex].x - gridX) < 1 && Math.abs(path[pathIndex].y - gridY) < 1) {
-        grid[path[pathIndex].x][path[pathIndex].y] = PATH_TAKEN;
-        pathIndex++;
+       traversePath();
     }
 })
