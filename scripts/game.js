@@ -20,7 +20,6 @@ let gameIntervalId;
 gameIntervalId = setInterval(run, 1000 / 120);
 
 function drawGrid(grid) {
-
     for (let row = 0; row < grid.length; row++) {
         for (let col = 0; col < grid[row].length; col++) {
             if (grid[row][col] === WALL) {
@@ -40,10 +39,10 @@ function drawCircle(x, y, width, color) {
 }
 
 canvas.addEventListener('mousemove', e => {
-    let gridX = Math.floor(e.offsetX / canvas.width * grid.length);
-    let gridY = Math.floor(e.offsetY / canvas.height * grid.length);
-    if (grid[gridX][gridY] === PATH && path[pathIndex].x === gridX && path[pathIndex].y === gridY) {
-        grid[gridX][gridY] = PATH_TAKEN;
+    let gridX = e.offsetX / canvas.width * grid.length;
+    let gridY = e.offsetY / canvas.height * grid.length;
+    if (Math.abs(path[pathIndex].x - gridX) < 1 && Math.abs(path[pathIndex].y - gridY) < 1) {
+        grid[path[pathIndex].x][path[pathIndex].y] = PATH_TAKEN;
         pathIndex++;
     }
 })
