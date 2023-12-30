@@ -16,18 +16,39 @@ export function drawGrid(grid) {
     for (let row = 0; row < grid.length; row++) {
         for (let col = 0; col < grid[row].length; col++) {
             if (grid[row][col] === WALL) {
-                drawCircle(SQUARE_SIZE * row + SQUARE_SIZE / 2, SQUARE_SIZE * col + SQUARE_SIZE / 2, SQUARE_SIZE / 4, "yellow");
+                drawCircle(row, col, "yellow");
             } else if (grid[row][col] === PATH_TAKEN) {
-                drawCircle(SQUARE_SIZE * row + SQUARE_SIZE / 2, SQUARE_SIZE * col + SQUARE_SIZE / 2, SQUARE_SIZE / 4, "red");
+                drawCircle(row, col, "red");
             } 
         }
     }
 }
 
-function drawCircle(x, y, width, color) {
+let offset = 0;
+let lastShiftTime = 0;
+export function animatePath(timestamp, path, pathIndex) {
+    for (let i = 0; i <= pathIndex; i++) {
+        ctx.clearRect(path[i].x * SQUARE_SIZE, path[i].y * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
+    }
+    for (let i = offset; i < pathIndex - 1; i += 8) {
+        drawCircle(path[i].x, path[i].y, "red");
+        drawCircle(path[i + 1].x, path[i + 1].y, "red");
+    }
+    //always show head position
+    drawCircle(path[pathIndex - 1].x, path[pathIndex - 1].y, "red");
+
+    if (timestamp - lastShiftTime >= (25 - (5 * pathIndex / path.length))) {
+        offset++;
+        offset %= 8;
+        lastShiftTime = timestamp;
+    }
+}
+
+
+function drawCircle(gridX, gridY, color) {
     ctx.beginPath();
     ctx.fillStyle = color;
-    ctx.arc(x, y, width, 0, 2 * Math.PI);
+    ctx.arc(SQUARE_SIZE * gridX + SQUARE_SIZE / 2, SQUARE_SIZE * gridY + SQUARE_SIZE / 2, SQUARE_SIZE / 4, 0, 2 * Math.PI);
     ctx.fill();
 }
 
