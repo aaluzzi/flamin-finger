@@ -33,7 +33,8 @@ function drawCircle(x, y, width, color) {
 
 export function drawTimer(timeLeft) {
     ctx.clearRect(SQUARE_SIZE * 15, SQUARE_SIZE * 17, SQUARE_SIZE * 7, SQUARE_SIZE * 3);
-    ctx.font = '76px Clock';
+    const scaledSize = canvas.height / 11;
+    ctx.font = `${scaledSize}px Clock`;
     ctx.fillStyle = "red";
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
