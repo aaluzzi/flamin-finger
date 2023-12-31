@@ -1,4 +1,4 @@
-import { animatePath, animateGridDraw, drawTimer } from "./modules/graphics.js";
+import { animatePath, animateGridDraw, drawTimer, animateGridClear } from "./modules/graphics.js";
 import { PATH_TAKEN, generatePath } from "./modules/grid.js";
 
 const {grid, path} = generatePath();
@@ -16,10 +16,15 @@ function gameLoop(timestamp) {
             gameStartTime = Date.now();
             gameTimerId = setTimeout(lose, timerLengthSeconds * 1000);
         }
-    } if (status === "started") {
+    } else if (status === "started") {
         animatePath(timestamp, path, pathIndex);
         drawTimer(timerLengthSeconds - ((Date.now() - gameStartTime) / 1000));
+    } else if (status === "ending") {
+        if (!animateGridClear(timestamp)) {
+            status = "ended";
+        }
     }
+
     window.requestAnimationFrame(gameLoop);
 }
 window.requestAnimationFrame(gameLoop);
@@ -29,13 +34,13 @@ function start() {
 }
 
 function win() {
-    status = "ended";
+    status = "ending";
     console.log("win");
     clearTimeout(gameTimerId);
 }
 
 function lose() {
-    status = "ended";
+    status = "ending";
     console.log("lost");
 }
 

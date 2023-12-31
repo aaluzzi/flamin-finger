@@ -55,6 +55,30 @@ function drawDiagonalDown(grid, row, col) {
     }
 }
 
+export function animateGridClear(timestamp) {
+    if (timestamp - lastShiftTime > 20) {
+        lastShiftTime = timestamp;
+
+        clearDiagonalDown(row, col);
+        if (col > 0) {
+            col--;
+        } else if (row < COLS - 1) {
+            row++;
+        } else {
+            return false; //done clearing
+        }
+    }
+    return true;
+}
+
+function clearDiagonalDown(row, col) {
+    while (row < ROWS && col < COLS) {
+        ctx.clearRect(col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
+        row++;
+        col++;
+    }
+}
+
 let offset = 0;
 export function animatePath(timestamp, path, pathIndex) {
     for (let i = 0; i <= pathIndex; i++) {
