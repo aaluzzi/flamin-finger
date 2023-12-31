@@ -1,5 +1,5 @@
-const ROWS = 18;
-const COLS = 18;
+export const ROWS = 37;
+export const COLS = 37;
 
 export const EMPTY = 0;
 export const WALL = 1;
@@ -7,8 +7,8 @@ export const PATH = 2;
 export const PATH_TAKEN = 3;
 
 export function generatePath() {
-    let grid = Array.from({ length: ROWS * 2 + 1 }, () => Array(COLS * 2 + 1).fill(EMPTY));
-    let visited = Array.from({ length: ROWS * 2 + 1}, () => Array(COLS * 2 + 1).fill(false));
+    let grid = Array.from({ length: ROWS}, () => Array(COLS).fill(EMPTY));
+    let visited = Array.from({ length: ROWS}, () => Array(COLS).fill(false));
     let current = {x: 1, y: grid.length - 2}; //account for the outer walls
     let path = [];
 

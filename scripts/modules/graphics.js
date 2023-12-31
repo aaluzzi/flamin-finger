@@ -1,4 +1,4 @@
-import { PATH_TAKEN, WALL} from "./grid.js";
+import { COLS, PATH_TAKEN, ROWS, WALL} from "./grid.js";
 
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
@@ -24,10 +24,41 @@ export function drawGrid(grid) {
     }
 }
 
-let offset = 0;
 let lastShiftTime = 0;
+
+let row = ROWS - 1;
+let col = 0;
+export function animateGridDraw(timestamp, grid) {
+    if (timestamp - lastShiftTime > 20) {
+        lastShiftTime = timestamp;
+
+        drawDiagonalDown(grid, row, col);
+        if (row > 0) {
+            row--;
+        } else if (col < COLS - 1) {
+            col++;
+        } else {
+            return false; //done drawing
+        }
+
+    }
+    return true;
+}
+
+function drawDiagonalDown(grid, row, col) {
+    while (row < ROWS && col < COLS) {
+        if (grid[col][row] === WALL) {
+            drawCircle(col, row, "yellow");
+        }
+        row++;
+        col++;
+    }
+}
+
+let offset = 0;
 export function animatePath(timestamp, path, pathIndex) {
     for (let i = 0; i <= pathIndex; i++) {
+        ctx.shadowBlur = 0;
         ctx.clearRect(path[i].x * SQUARE_SIZE, path[i].y * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
     }
     for (let i = offset; i < pathIndex - 1; i += 8) {
@@ -48,6 +79,10 @@ export function animatePath(timestamp, path, pathIndex) {
 function drawCircle(gridX, gridY, color) {
     ctx.beginPath();
     ctx.fillStyle = color;
+    ctx.shadowOffsetX = 0;
+    ctx.shadowOffsetY = 0;
+    ctx.shadowBlur = SQUARE_SIZE / 4;
+    ctx.shadowColor = color;
     ctx.arc(SQUARE_SIZE * gridX + SQUARE_SIZE / 2, SQUARE_SIZE * gridY + SQUARE_SIZE / 2, SQUARE_SIZE / 4, 0, 2 * Math.PI);
     ctx.fill();
 }

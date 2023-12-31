@@ -1,18 +1,22 @@
-import { animatePath, drawGrid, drawTimer } from "./modules/graphics.js";
+import { animatePath, animateGridDraw, drawTimer } from "./modules/graphics.js";
 import { PATH_TAKEN, generatePath } from "./modules/grid.js";
 
 const {grid, path} = generatePath();
-let pathIndex = 0;
-let status = "waiting";
+let pathIndex = 1;
+let status = "starting";
 
 let gameTimerId;
 let gameStartTime;
 let timerLengthSeconds = path.length / 10;
 
-drawGrid(grid);
-
 function gameLoop(timestamp) {
-    if (status === "started") { //TODO get around if statement
+    if (status === "starting") {
+        if (!animateGridDraw(timestamp, grid)) {
+            status = "started";
+            gameStartTime = Date.now();
+            gameTimerId = setTimeout(lose, timerLengthSeconds * 1000);
+        }
+    } if (status === "started") {
         animatePath(timestamp, path, pathIndex);
         drawTimer(timerLengthSeconds - ((Date.now() - gameStartTime) / 1000));
     }
@@ -21,10 +25,7 @@ function gameLoop(timestamp) {
 window.requestAnimationFrame(gameLoop);
 
 function start() {
-    status = "started";
-    
-    gameStartTime = Date.now();
-    gameTimerId = setTimeout(lose, timerLengthSeconds * 1000);
+    status = "starting";
 }
 
 function win() {
@@ -53,7 +54,7 @@ function traversePath() {
 document.querySelector('canvas').addEventListener('mousemove', e => {
     let gridX = e.offsetX / e.target.width * grid.length;
     let gridY = e.offsetY / e.target.height * grid.length;
-    if (Math.abs(path[pathIndex].x - gridX) < 0.85 && Math.abs(path[pathIndex].y - gridY) < 0.85 && status !== "ended") {
+    if (Math.abs(path[pathIndex].x - gridX) < 0.9 && Math.abs(path[pathIndex].y - gridY) < 0.9 && status !== "ended") {
        traversePath();
     }
 })
