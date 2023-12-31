@@ -12,6 +12,10 @@ const clockFont = new FontFace('Clock', 'url(../resources/clock.ttf)');
 
 clockFont.load().then(font => document.fonts.add(font));
 
+export function clearDisplay() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+}
+
 export function drawGrid(grid) {
     for (let row = 0; row < grid.length; row++) {
         for (let col = 0; col < grid[row].length; col++) {
@@ -119,4 +123,13 @@ export function drawTimer(timeLeft) {
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.fillText(timeLeft.toFixed(1).padStart(4, '0'), canvas.width / 2, canvas.height / 2);
+}
+
+export function drawMenu() {
+    ctx.font = `${canvas.height / 10}px monospace`;
+    ctx.fillStyle = "red";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "middle";
+    ctx.shadowBlur = 0;
+    ctx.fillText("Flamin Finger", canvas.width / 2, canvas.height / 2);
 }

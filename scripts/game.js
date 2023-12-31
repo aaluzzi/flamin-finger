@@ -1,9 +1,9 @@
-import { animatePath, animateGridDraw, drawTimer, animateGridClear } from "./modules/graphics.js";
+import { drawMenu, animatePath, animateGridDraw, drawTimer, animateGridClear, clearDisplay } from "./modules/graphics.js";
 import { PATH_TAKEN, generatePath } from "./modules/grid.js";
 
 let game;
 let pathIndex;
-let status = "starting";
+let status = "menu";
 
 let score;
 let gameTimerId;
@@ -28,13 +28,13 @@ function gameLoop(timestamp) {
         if (!animateGridClear(timestamp)) {
             startRound();
         }
+    } else if (status === "menu") {
+        drawMenu();
     }
 
     window.requestAnimationFrame(gameLoop);
 }
 window.requestAnimationFrame(gameLoop);
-
-startGame();
 
 function startGame() {
     score = 0;
@@ -45,6 +45,7 @@ function startRound() {
     game = generatePath();
     pathIndex = 1;
     timerLengthSeconds = game.path.length / (10 + score);
+    clearDisplay();
     status = "starting";
 }
 
@@ -69,10 +70,18 @@ function traversePath() {
     pathIndex++;
 }
 
+document.querySelector('canvas').addEventListener('click', e => {
+    if (status === "menu") {
+        startGame();
+    }
+})
+
 document.querySelector('canvas').addEventListener('mousemove', e => {
-    let gridX = e.offsetX / e.target.width * game.grid.length;
-    let gridY = e.offsetY / e.target.height * game.grid.length;
-    if (Math.abs(game.path[pathIndex].x - gridX) < 0.9 && Math.abs(game.path[pathIndex].y - gridY) < 0.9 && status === "running") {
-       traversePath();
+    if (status === "running") {
+        let gridX = e.offsetX / e.target.width * game.grid.length;
+        let gridY = e.offsetY / e.target.height * game.grid.length;
+        if (Math.abs(game.path[pathIndex].x - gridX) < 0.9 && Math.abs(game.path[pathIndex].y - gridY) < 0.9) {
+           traversePath();
+        }
     }
 })
