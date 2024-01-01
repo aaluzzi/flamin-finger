@@ -1,5 +1,6 @@
 import { drawMenu, animatePath, animateGridDraw, drawTimer, animateGridClear, clearDisplay, drawScore } from "./modules/graphics.js";
 import { PATH_TAKEN, generatePath } from "./modules/grid.js";
+import { playMenuMusic, stopMenuMusic, playMazeMusic, stopMazeMusic} from "./modules/sounds.js";
 
 let game;
 let pathIndex;
@@ -16,6 +17,9 @@ function gameLoop(timestamp) {
             status = "running";
             gameStartTime = Date.now();
             gameTimerId = setTimeout(loseGame, timerLengthSeconds * 1000);
+            if (score === 0) {
+                playMazeMusic();
+            }
         }
     } else if (status === "running") {
         animatePath(timestamp, game.path, pathIndex);
@@ -23,6 +27,7 @@ function gameLoop(timestamp) {
     } else if (status === "losing") {
         if (!animateGridClear(timestamp)) {
             status = "menu";
+            playMenuMusic();
         }
     } else if (status === "switching") {
         if (!animateGridClear(timestamp)) {
@@ -35,8 +40,10 @@ function gameLoop(timestamp) {
     window.requestAnimationFrame(gameLoop);
 }
 window.requestAnimationFrame(gameLoop);
+playMenuMusic();
 
 function startGame() {
+    stopMenuMusic();
     score = 0;
     drawScore(score);
     startRound();
@@ -59,12 +66,12 @@ function winRound() {
 
 function loseGame() {
     status = "losing";
-    console.log(`Your score: ${score}`);
+    stopMazeMusic();
 }
 
 function traversePath() {
     game.grid[game.path[pathIndex].x][game.path[pathIndex].y] = PATH_TAKEN;
-    
+
     if (pathIndex === game.path.length - 1) {
         winRound();
         return;

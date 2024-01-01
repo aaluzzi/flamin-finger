@@ -37,7 +37,7 @@ let lastShiftTime = 0;
 let row = ROWS - 1;
 let col = 0;
 export function animateGridDraw(timestamp, grid) {
-    if (timestamp - lastShiftTime > 18) {
+    if (timestamp - lastShiftTime > 15) {
         lastShiftTime = timestamp;
 
         drawDiagonalDown(grid, row, col);
@@ -64,7 +64,7 @@ function drawDiagonalDown(grid, row, col) {
 }
 
 export function animateGridClear(timestamp) {
-    if (timestamp - lastShiftTime > 18) {
+    if (timestamp - lastShiftTime > 15) {
         lastShiftTime = timestamp;
 
         clearDiagonalDown(row, col);
