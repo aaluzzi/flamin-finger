@@ -96,17 +96,23 @@ function surroundWithWalls(current, grid) {
 
 function getEmptyNeighbors(current, grid, visited) {
     let neighbors = [];
-    if (current.x > 1 && grid[current.x - 2][current.y] === EMPTY && !visited[current.x - 2][current.y]) {
-        neighbors.push({x: current.x - 2, y: current.y});
-    }
+
+    //Add twice to bias the path towards the top right
     if (current.x < grid.length - 2 && grid[current.x + 2][current.y] === EMPTY && !visited[current.x + 2][current.y]) {
+        neighbors.push({x: current.x + 2, y: current.y});
         neighbors.push({x: current.x + 2, y: current.y});
     }
     if (current.y > 1 && grid[current.x][current.y - 2] === EMPTY && !visited[current.x][current.y - 2]) {
         neighbors.push({x: current.x, y: current.y - 2});
+        neighbors.push({x: current.x, y: current.y - 2});
+    }       
+
+    if (current.x > 1 && grid[current.x - 2][current.y] === EMPTY && !visited[current.x - 2][current.y]) {
+        neighbors.push({x: current.x - 2, y: current.y});
     }
     if (current.y < grid[current.x].length - 2 && grid[current.x][current.y + 2] === EMPTY && !visited[current.x][current.y + 2]) {
         neighbors.push({x: current.x, y: current.y + 2});
     }
+
     return neighbors;
 }

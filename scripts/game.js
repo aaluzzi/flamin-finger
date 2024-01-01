@@ -45,7 +45,7 @@ function startGame() {
 function startRound() {
     game = generatePath();
     pathIndex = 2;
-    timerLengthSeconds = game.path.length / (10 + score);
+    timerLengthSeconds = game.path.length / (4 + score);
     clearDisplay();
     status = "starting";
 }
