@@ -28,7 +28,7 @@ function gameLoop(timestamp) {
             playMenuMusic();
         }
     } else if (status === "start_switch") {
-        if (!animateGridClear(timestamp, 6)) {
+        if (!animateGridClear(timestamp, 5)) {
             startMaze();
             status = "end_switch";
         }
@@ -59,7 +59,7 @@ function startGame() {
 function startMaze() {
     game = generatePath();
     pathIndex = 2;
-    timerLengthSeconds = game.path.length / (4 + score);
+    timerLengthSeconds = game.path.length / (3 + score);
     clearDisplay();
 }
 

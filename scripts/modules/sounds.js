@@ -11,6 +11,9 @@ const ENDS = [];
 for (let i = 0; i <= 2; i++) {
     GAME_SONGS[i] = new Audio(`../resources/audio/music/maze${i}.mp3`);
     GAME_SONGS[i].volume = 0.25;
+    GAME_SONGS[i].addEventListener('ended', () => {
+        GAME_SONGS[i].play();
+    })
 }
 
 for (let i = 0; i < 8; i++) {
