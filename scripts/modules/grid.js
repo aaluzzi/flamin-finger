@@ -19,6 +19,8 @@ export function generatePath() {
         }
     }
 
+    grid[current.x][current.y + 1] = PATH_TAKEN;
+    path.push({x: current.x, y: current.y + 1});
     grid[current.x][current.y] = PATH_TAKEN;
 
     while (current.x !== grid[0].length - 2 || current.y !== 1) {
@@ -60,10 +62,14 @@ export function generatePath() {
         }
     }
     path.push(current);
+    grid[current.x + 1][current.y] = PATH;
+    path.push({x: current.x + 1, y: current.y});
+    grid[current.x + 1][current.y - 1] = WALL; //hacky
+    grid[current.x + 1][current.y + 1] = WALL; //hacky
 
     //Fill in walls
-    for (const square of path) {
-        surroundWithWalls(square, grid);
+    for (let i = 1; i < path.length - 1; i++) {
+        surroundWithWalls(path[i], grid);
     }
 
     return {grid, path};

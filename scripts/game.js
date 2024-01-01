@@ -44,7 +44,7 @@ function startGame() {
 
 function startRound() {
     game = generatePath();
-    pathIndex = 1;
+    pathIndex = 2;
     timerLengthSeconds = game.path.length / (10 + score);
     clearDisplay();
     status = "starting";
@@ -82,7 +82,7 @@ document.getElementById('game').addEventListener('mousemove', e => {
     if (status === "running") {
         let gridX = e.offsetX / e.target.width * game.grid.length;
         let gridY = e.offsetY / e.target.height * game.grid.length;
-        if (Math.abs(game.path[pathIndex].x - gridX) < 0.95 && Math.abs(game.path[pathIndex].y - gridY) < 0.95) {
+        if (Math.abs(game.path[pathIndex].x - gridX) < 1 && Math.abs(game.path[pathIndex].y - gridY) < 1) {
            traversePath();
         }
     }
