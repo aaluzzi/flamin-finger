@@ -1,19 +1,23 @@
 import { COLS, PATH_TAKEN, ROWS, WALL} from "./grid.js";
 
-const canvas = document.getElementById("game");
-const ctx = canvas.getContext("2d");
+const gameCanvas = document.getElementById("game");
+const scoreCanvas = document.getElementById("score")
+const gameCtx = gameCanvas.getContext("2d");
+const scoreCtx = scoreCanvas.getContext("2d");
 
-canvas.width = canvas.offsetWidth;
-canvas.height = canvas.offsetHeight;
+gameCanvas.width = gameCanvas.offsetWidth;
+gameCanvas.height = gameCanvas.offsetHeight;
+scoreCanvas.width = scoreCanvas.offsetWidth;
+scoreCanvas.height = scoreCanvas.offsetHeight;
 
-const SQUARE_SIZE = canvas.width / 37;
+const SQUARE_SIZE = gameCanvas.width / ROWS;
 
 const clockFont = new FontFace('Clock', 'url(../resources/clock.ttf)');
 
 clockFont.load().then(font => document.fonts.add(font));
 
 export function clearDisplay() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    gameCtx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
 }
 
 export function drawGrid(grid) {
@@ -33,7 +37,7 @@ let lastShiftTime = 0;
 let row = ROWS - 1;
 let col = 0;
 export function animateGridDraw(timestamp, grid) {
-    if (timestamp - lastShiftTime > 20) {
+    if (timestamp - lastShiftTime > 18) {
         lastShiftTime = timestamp;
 
         drawDiagonalDown(grid, row, col);
@@ -60,7 +64,7 @@ function drawDiagonalDown(grid, row, col) {
 }
 
 export function animateGridClear(timestamp) {
-    if (timestamp - lastShiftTime > 20) {
+    if (timestamp - lastShiftTime > 18) {
         lastShiftTime = timestamp;
 
         clearDiagonalDown(row, col);
@@ -77,7 +81,7 @@ export function animateGridClear(timestamp) {
 
 function clearDiagonalDown(row, col) {
     while (row < ROWS && col < COLS) {
-        ctx.clearRect(col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
+        gameCtx.clearRect(col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
         row++;
         col++;
     }
@@ -86,8 +90,8 @@ function clearDiagonalDown(row, col) {
 let offset = 0;
 export function animatePath(timestamp, path, pathIndex) {
     for (let i = 0; i <= pathIndex; i++) {
-        ctx.shadowBlur = 0;
-        ctx.clearRect(path[i].x * SQUARE_SIZE, path[i].y * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
+        gameCtx.shadowBlur = 0;
+        gameCtx.clearRect(path[i].x * SQUARE_SIZE, path[i].y * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
     }
     for (let i = offset; i < pathIndex - 1; i += 8) {
         drawCircle(path[i].x, path[i].y, "red");
@@ -105,31 +109,40 @@ export function animatePath(timestamp, path, pathIndex) {
 
 
 function drawCircle(gridX, gridY, color) {
-    ctx.beginPath();
-    ctx.fillStyle = color;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 0;
-    ctx.shadowBlur = SQUARE_SIZE / 4;
-    ctx.shadowColor = color;
-    ctx.arc(SQUARE_SIZE * gridX + SQUARE_SIZE / 2, SQUARE_SIZE * gridY + SQUARE_SIZE / 2, SQUARE_SIZE / 4, 0, 2 * Math.PI);
-    ctx.fill();
+    gameCtx.beginPath();
+    gameCtx.fillStyle = color;
+    gameCtx.shadowOffsetX = 0;
+    gameCtx.shadowOffsetY = 0;
+    gameCtx.shadowBlur = SQUARE_SIZE / 4;
+    gameCtx.shadowColor = color;
+    gameCtx.arc(SQUARE_SIZE * gridX + SQUARE_SIZE / 2, SQUARE_SIZE * gridY + SQUARE_SIZE / 2, SQUARE_SIZE / 4, 0, 2 * Math.PI);
+    gameCtx.fill();
 }
 
 export function drawTimer(timeLeft) {
-    ctx.clearRect(SQUARE_SIZE * 15, SQUARE_SIZE * 17, SQUARE_SIZE * 7, SQUARE_SIZE * 3);
-    const scaledSize = canvas.height / 11;
-    ctx.font = `${scaledSize}px Clock`;
-    ctx.fillStyle = "red";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.fillText(timeLeft.toFixed(1).padStart(4, '0'), canvas.width / 2, canvas.height / 2);
+    gameCtx.clearRect(SQUARE_SIZE * 15, SQUARE_SIZE * 17, SQUARE_SIZE * 7, SQUARE_SIZE * 3);
+    const scaledSize = gameCanvas.height / 11;
+    gameCtx.font = `${scaledSize}px Clock`;
+    gameCtx.fillStyle = "red";
+    gameCtx.textAlign = "center";
+    gameCtx.textBaseline = "middle";
+    gameCtx.fillText(timeLeft.toFixed(1).padStart(4, '0'), gameCanvas.width / 2, gameCanvas.height / 2);
 }
 
 export function drawMenu() {
-    ctx.font = `${canvas.height / 10}px monospace`;
-    ctx.fillStyle = "red";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
-    ctx.shadowBlur = 0;
-    ctx.fillText("Flamin Finger", canvas.width / 2, canvas.height / 2);
+    gameCtx.font = `${gameCanvas.height / 10}px monospace`;
+    gameCtx.fillStyle = "red";
+    gameCtx.textAlign = "center";
+    gameCtx.textBaseline = "middle";
+    gameCtx.shadowBlur = 0;
+    gameCtx.fillText("Flamin Finger", gameCanvas.width / 2, gameCanvas.height / 2);
+}
+
+export function drawScore(score) {
+    scoreCtx.clearRect(0, 0, scoreCanvas.width, scoreCanvas.height)
+    scoreCtx.font = `${scoreCanvas.height * 1.25}px Clock`;
+    scoreCtx.fillStyle = "red";
+    scoreCtx.textAlign = "right";
+    scoreCtx.textBaseline = "middle";
+    scoreCtx.fillText(score, scoreCanvas.width, scoreCanvas.height / 2);
 }
