@@ -1,6 +1,6 @@
 import { drawMenu, animatePath, animateGridDraw, drawTimer, animateGridClear, clearDisplay, drawScore } from "./modules/graphics.js";
 import { PATH_TAKEN, generatePath } from "./modules/grid.js";
-import { playMenuMusic, stopMenuMusic, playMazeMusic, stopMazeMusic} from "./modules/sounds.js";
+import { playMenuMusic, stopMenuMusic, playMazeMusic, stopMazeMusic, playTraverseSound, playEndSound, playStartSound} from "./modules/sounds.js";
 
 let game;
 let pathIndex;
@@ -44,6 +44,7 @@ playMenuMusic();
 
 function startGame() {
     stopMenuMusic();
+    playStartSound();
     score = 0;
     drawScore(score);
     startRound();
@@ -67,10 +68,14 @@ function winRound() {
 function loseGame() {
     status = "losing";
     stopMazeMusic();
+    playEndSound();
 }
 
 function traversePath() {
     game.grid[game.path[pathIndex].x][game.path[pathIndex].y] = PATH_TAKEN;
+    if (pathIndex % 2 === 0) {
+        playTraverseSound();
+    }
 
     if (pathIndex === game.path.length - 1) {
         winRound();
