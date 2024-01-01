@@ -20,18 +20,6 @@ export function clearDisplay() {
     gameCtx.clearRect(0, 0, gameCanvas.width, gameCanvas.height);
 }
 
-export function drawGrid(grid) {
-    for (let row = 0; row < grid.length; row++) {
-        for (let col = 0; col < grid[row].length; col++) {
-            if (grid[row][col] === WALL) {
-                drawCircle(row, col, "yellow");
-            } else if (grid[row][col] === PATH_TAKEN) {
-                drawCircle(row, col, "red");
-            } 
-        }
-    }
-}
-
 let lastShiftTime = 0;
 
 let row = ROWS - 1;
@@ -56,7 +44,7 @@ export function animateGridDraw(timestamp, grid, delay) {
 function drawDiagonalDown(grid, row, col) {
     while (row < ROWS && col < COLS) {
         if (grid[col][row] === WALL) {
-            drawCircle(col, row, "yellow");
+            drawCircle(col, row, "#ffd500");
         }
         row++;
         col++;
@@ -100,7 +88,7 @@ export function animatePath(timestamp, path, pathIndex) {
     //always show head position
     drawCircle(path[pathIndex - 1].x, path[pathIndex - 1].y, "red");
 
-    if (timestamp - lastShiftTime >= (25 - (5 * pathIndex / path.length))) {
+    if (timestamp - lastShiftTime >= (22 - (5 * pathIndex / path.length))) {
         offset++;
         offset %= 8;
         lastShiftTime = timestamp;
