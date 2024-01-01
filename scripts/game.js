@@ -80,9 +80,9 @@ document.getElementById('game').addEventListener('click', e => {
 
 document.getElementById('game').addEventListener('mousemove', e => {
     if (status === "running") {
-        let gridX = e.offsetX / e.target.width * game.grid.length;
-        let gridY = e.offsetY / e.target.height * game.grid.length;
-        if (Math.abs(game.path[pathIndex].x - gridX) < 1 && Math.abs(game.path[pathIndex].y - gridY) < 1) {
+        let gridX = (e.offsetX / e.target.width * game.grid.length);
+        let gridY = (e.offsetY / e.target.height * game.grid.length);
+        if (Math.abs(game.path[pathIndex].x + 0.5 - gridX) < 1.25 && Math.abs(game.path[pathIndex].y + 0.5 - gridY) < 1.25) {
            traversePath();
         }
     }
