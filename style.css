@@ -18,6 +18,7 @@ canvas {
     border: 1vmin solid black;
     border-radius: 2%;
     margin-top: 24px;
+    cursor: grab;
 }
 
 #score {

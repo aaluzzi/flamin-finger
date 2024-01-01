@@ -7,31 +7,36 @@ let pathIndex;
 let status = "menu";
 
 let score;
-let gameTimerId;
-let gameStartTime;
+let mazeTimerId;
+let mazeStartTime;
 let timerLengthSeconds;
 
 function gameLoop(timestamp) {
     if (status === "starting") {
-        if (!animateGridDraw(timestamp, game.grid)) {
+        if (!animateGridDraw(timestamp, game.grid, 15)) {
             status = "running";
-            gameStartTime = Date.now();
-            gameTimerId = setTimeout(loseGame, timerLengthSeconds * 1000);
-            if (score === 0) {
-                playMazeMusic();
-            }
+            mazeStartTime = Date.now();
+            mazeTimerId = setTimeout(loseGame, timerLengthSeconds * 1000);
+            playMazeMusic();
         }
     } else if (status === "running") {
         animatePath(timestamp, game.path, pathIndex);
-        drawTimer(timerLengthSeconds - ((Date.now() - gameStartTime) / 1000));
+        drawTimer(timerLengthSeconds - ((Date.now() - mazeStartTime) / 1000));
     } else if (status === "losing") {
-        if (!animateGridClear(timestamp)) {
+        if (!animateGridClear(timestamp, 25)) {
             status = "menu";
             playMenuMusic();
         }
-    } else if (status === "switching") {
-        if (!animateGridClear(timestamp)) {
-            startRound();
+    } else if (status === "start_switch") {
+        if (!animateGridClear(timestamp, 6)) {
+            startMaze();
+            status = "end_switch";
+        }
+    } else if (status === "end_switch") {
+        if (!animateGridDraw(timestamp, game.grid, 15)) {
+            status = "running";
+            mazeStartTime = Date.now();
+            mazeTimerId = setTimeout(loseGame, timerLengthSeconds * 1000);
         }
     } else if (status === "menu") {
         drawMenu();
@@ -47,22 +52,22 @@ function startGame() {
     playStartSound();
     score = 0;
     drawScore(score);
-    startRound();
+    startMaze();
+    status = "starting";
 }
 
-function startRound() {
+function startMaze() {
     game = generatePath();
     pathIndex = 2;
     timerLengthSeconds = game.path.length / (4 + score);
     clearDisplay();
-    status = "starting";
 }
 
-function winRound() {
-    status = "switching";
+function finishMaze() {
+    clearTimeout(mazeTimerId);
+    status = "start_switch";
     score++;
     drawScore(score);
-    clearTimeout(gameTimerId);
 }
 
 function loseGame() {
@@ -78,7 +83,7 @@ function traversePath() {
     }
 
     if (pathIndex === game.path.length - 1) {
-        winRound();
+        finishMaze();
         return;
     }
     pathIndex++;
@@ -88,7 +93,7 @@ document.getElementById('game').addEventListener('click', e => {
     if (status === "menu") {
         startGame();
     }
-})
+});
 
 document.getElementById('game').addEventListener('mousemove', e => {
     if (status === "running") {
@@ -98,4 +103,6 @@ document.getElementById('game').addEventListener('mousemove', e => {
            traversePath();
         }
     }
-})
+});
+
+document.getElementById('game').addEventListener('contextmenu', e => e.preventDefault());
