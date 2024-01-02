@@ -1,6 +1,6 @@
 import { drawMenu, animatePath, animateGridDraw, drawTimer, animateGridClear, clearDisplay, drawScore } from "./modules/graphics.js";
 import { PATH_TAKEN, generatePath } from "./modules/grid.js";
-import { playMenuMusic, stopMenuMusic, playMazeMusic, stopMazeMusic, playTraverseSound, playEndSound, playStartSound} from "./modules/sounds.js";
+import { playMenuMusic, stopMenuMusic, playMazeMusic, stopMazeMusic, playTraverseSound, playEndSound, playStartSound, playSwitchSound} from "./modules/sounds.js";
 
 let game;
 let pathIndex;
@@ -64,6 +64,7 @@ function startMaze() {
 }
 
 function finishMaze() {
+    playSwitchSound();
     clearTimeout(mazeTimerId);
     status = "start_switch";
     score++;
