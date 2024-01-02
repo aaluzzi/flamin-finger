@@ -25,6 +25,7 @@ function gameLoop(timestamp) {
     } else if (status === "losing") {
         if (!animateGridClear(timestamp, 25)) {
             status = "menu";
+            drawMenu();
             playMenuMusic();
         }
     } else if (status === "start_switch") {
@@ -38,13 +39,12 @@ function gameLoop(timestamp) {
             mazeStartTime = Date.now();
             mazeTimerId = setTimeout(loseGame, timerLengthSeconds * 1000);
         }
-    } else if (status === "menu") {
-        drawMenu();
     }
 
     window.requestAnimationFrame(gameLoop);
 }
 window.requestAnimationFrame(gameLoop);
+drawMenu();
 playMenuMusic();
 
 function startGame() {
