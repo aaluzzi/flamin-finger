@@ -18,7 +18,7 @@ async function fetchUserInfo() {
             const json = await resp.json();
     
             setHighscore(json.highscore);
-            document.querySelector('.sign-in').textContent = json.username;
+            document.querySelector('.sign-in').textContent = json.username + '\n(HS: ' + json.highscore + `)`;
         } catch (err) {
             document.querySelector('.sign-in').addEventListener('click', () => {
                 window.location.href = `${HOST}/login`
@@ -28,6 +28,22 @@ async function fetchUserInfo() {
         document.querySelector('.sign-in').addEventListener('click', () => {
             window.location.href = `${HOST}/login`
         });
+    }
+}
+
+export async function submitScore(score) {
+    if (localStorage.getItem('token')) {
+        try {
+            await fetch(`${HOST}/submit`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                    'score': score,
+                }
+            });
+        } catch (err) {
+            console.err(err);
+        }
     }
 }
 

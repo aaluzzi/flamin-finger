@@ -1,3 +1,4 @@
+import { submitScore } from "../script.js";
 import { drawMenu, animatePath, animateGridDraw, drawTimer, animateGridClear, clearDisplay, drawScore } from "./graphics.js";
 import { PATH_TAKEN, generatePath } from "./grid.js";
 import { playMenuMusic, stopMenuMusic, playMazeMusic, stopMazeMusic, playTraverseSound, playEndSound, playStartSound, playSwitchSound} from "./sounds.js";
@@ -84,6 +85,10 @@ function loseGame() {
     status = "losing";
     stopMazeMusic();
     playEndSound();
+    if (score > highscore) {
+        highscore = score;
+        submitScore(score);
+    }
 }
 
 function traversePath() {
