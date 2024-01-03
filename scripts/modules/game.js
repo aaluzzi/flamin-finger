@@ -1,15 +1,27 @@
-import { drawMenu, animatePath, animateGridDraw, drawTimer, animateGridClear, clearDisplay, drawScore } from "./modules/graphics.js";
-import { PATH_TAKEN, generatePath } from "./modules/grid.js";
-import { playMenuMusic, stopMenuMusic, playMazeMusic, stopMazeMusic, playTraverseSound, playEndSound, playStartSound, playSwitchSound} from "./modules/sounds.js";
+import { drawMenu, animatePath, animateGridDraw, drawTimer, animateGridClear, clearDisplay, drawScore } from "./graphics.js";
+import { PATH_TAKEN, generatePath } from "./grid.js";
+import { playMenuMusic, stopMenuMusic, playMazeMusic, stopMazeMusic, playTraverseSound, playEndSound, playStartSound, playSwitchSound} from "./sounds.js";
 
 let game;
 let pathIndex;
-let status = "menu";
+let status;
 
 let score;
+let highscore;
 let mazeTimerId;
 let mazeStartTime;
 let timerLengthSeconds;
+
+export function loadGame() {
+    status = 'menu';
+    window.requestAnimationFrame(gameLoop);
+    drawMenu();
+    playMenuMusic();
+}
+
+export function setHighscore(score) {
+    highscore = score;
+}
 
 function gameLoop(timestamp) {
     if (status === "starting") {
@@ -43,9 +55,6 @@ function gameLoop(timestamp) {
 
     window.requestAnimationFrame(gameLoop);
 }
-window.requestAnimationFrame(gameLoop);
-drawMenu();
-playMenuMusic();
 
 function startGame() {
     stopMenuMusic();
