@@ -114,7 +114,7 @@ document.getElementById('game').addEventListener('mousemove', e => {
     if (status === "running") {
         let gridX = (e.offsetX / e.target.width * game.grid.length);
         let gridY = (e.offsetY / e.target.height * game.grid.length);
-        if (Math.abs(game.path[pathIndex].x + 0.5 - gridX) < 1.25 && Math.abs(game.path[pathIndex].y + 0.5 - gridY) < 1.25) {
+        if (Math.abs(game.path[pathIndex].x + 0.5 - gridX) < 1.6 && Math.abs(game.path[pathIndex].y + 0.5 - gridY) < 1.6) {
            traversePath();
         }
     }
