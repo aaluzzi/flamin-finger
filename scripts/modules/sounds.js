@@ -1,5 +1,5 @@
 const MENU_SONG = new Audio('../resources/audio/music/menu.mp3');
-MENU_SONG.volume = 0.15;
+MENU_SONG.volume = 0.10;
 const GAME_SONGS = [];
 
 const TRAVERSE = new Audio('../resources/audio/sounds/traverse.wav');
@@ -12,7 +12,7 @@ const ENDS = [];
 
 for (let i = 0; i < 3; i++) {
     GAME_SONGS[i] = new Audio(`../resources/audio/music/maze${i}.mp3`);
-    GAME_SONGS[i].volume = 0.15;
+    GAME_SONGS[i].volume = 0.10;
     GAME_SONGS[i].addEventListener('ended', () => {
         GAME_SONGS[i].play();
     })
@@ -20,9 +20,9 @@ for (let i = 0; i < 3; i++) {
 
 for (let i = 0; i < 8; i++) {
     STARTS[i] = new Audio(`../resources/audio/sounds/start/${i}.wav`);
-    STARTS[i].volume = 0.2;
+    STARTS[i].volume = 0.15;
     ENDS[i] = new Audio(`../resources/audio/sounds/end/${i}.wav`);
-    ENDS[i].volume = 0.2;
+    ENDS[i].volume = 0.15;
 }
 
 
