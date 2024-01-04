@@ -69,7 +69,7 @@ function startGame() {
 function startMaze() {
     game = generatePath();
     pathIndex = 2;
-    timerLengthSeconds = game.path.length / (3 + score);
+    timerLengthSeconds = game.path.length / (6 + (score / 2));
     clearDisplay();
 }
 
