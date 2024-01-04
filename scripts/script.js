@@ -1,6 +1,7 @@
 import { loadGame, setHighscore } from "./modules/game.js";
+import { hideLeaderboard, loadLeaderboard } from "./modules/leaderboard.js";
 
-const HOST = 'http://localhost:3000'
+export const HOST = 'http://localhost:3000'
 
 async function fetchUserInfo() {
     const searchParams = new URLSearchParams(window.location.search);
@@ -47,3 +48,15 @@ export async function submitScore(score) {
 
 fetchUserInfo();
 loadGame();
+
+document.querySelector('.leaderboard').addEventListener('click', e => {
+    e.target.classList.add('hidden');
+    document.querySelector('.play').classList.remove('hidden');
+    loadLeaderboard();
+});
+
+document.querySelector('.play').addEventListener('click', e => {
+    e.target.classList.add('hidden');
+    document.querySelector('.leaderboard').classList.remove('hidden');
+    hideLeaderboard();
+});
