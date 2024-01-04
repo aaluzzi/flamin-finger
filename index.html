@@ -3,16 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Flamin Finger</title>
+    <title>Flamin' Finger</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="top-bar">
-        <button class="leaderboard">View Leaderboard</button>
-        <canvas id="score"></canvas>
-        <button class="sign-in">Sign In</button>
+    <div class="header">
+        <button class="leaderboard">Leaderboard</button>
+        <button class="sign-in"><a href="http://localhost:3000/login">Sign In</a></button>
+        <div class="user hidden"></div>
     </div>
-    <canvas id="game"></canvas>
+    <div class="cabinet">
+        <canvas id="score"></canvas>
+        <canvas id="game"></canvas>
+    </div>
     <script type="module" src="./scripts/script.js"></script>
 </body>
 </html>

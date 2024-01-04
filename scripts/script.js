@@ -18,16 +18,14 @@ async function fetchUserInfo() {
             const json = await resp.json();
     
             setHighscore(json.highscore);
-            document.querySelector('.sign-in').textContent = json.username + '\n(HS: ' + json.highscore + `)`;
+            document.querySelector('.sign-in').classList.add('hidden');
+            document.querySelector('.user').classList.remove('hidden');
+            document.querySelector('.user').textContent = `${json.name} (${json.username})`;
         } catch (err) {
             document.querySelector('.sign-in').addEventListener('click', () => {
                 window.location.href = `${HOST}/login`
             });
         }
-    } else {
-        document.querySelector('.sign-in').addEventListener('click', () => {
-            window.location.href = `${HOST}/login`
-        });
     }
 }
 
