@@ -23,6 +23,7 @@ export function loadGame() {
 
 export function setHighscore(score) {
     highscore = score;
+    drawScore(highscore);
 }
 
 function gameLoop(timestamp) {
