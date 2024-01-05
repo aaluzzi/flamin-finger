@@ -1,7 +1,7 @@
 import { loadGame, setHighscore } from "./modules/game.js";
 import { hideLeaderboard, loadLeaderboard } from "./modules/leaderboard.js";
 
-export const HOST = 'http://localhost:3000'
+export const HOST = 'https://flamin-finger-backend.fly.dev'
 
 async function fetchUserInfo() {
     const searchParams = new URLSearchParams(window.location.search);
@@ -18,7 +18,9 @@ async function fetchUserInfo() {
             });
             const json = await resp.json();
     
-            setHighscore(json.highscore);
+            if (json.highscore) {
+                setHighscore(json.highscore);
+            }
             document.querySelector('.sign-in').classList.add('hidden');
             document.querySelector('.user').classList.remove('hidden');
             document.querySelector('.user').textContent = `${json.name} (${json.username})`;

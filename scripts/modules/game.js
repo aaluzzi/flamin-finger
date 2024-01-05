@@ -16,6 +16,7 @@ let timerLengthSeconds;
 export function loadGame() {
     status = 'menu';
     window.requestAnimationFrame(gameLoop);
+    highscore = 0;
     drawMenu();
     playMenuMusic();
 }
