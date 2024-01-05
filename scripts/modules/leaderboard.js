@@ -1,15 +1,21 @@
 import { HOST } from '../script.js';
 
 export async function loadLeaderboard() {
-	const resp = await fetch(`${HOST}/api/scores`, {
-		method: 'GET',
-	});
-	const json = await resp.json();
-
-    document.querySelector('.scores').classList.remove('hidden');
+	document.querySelector('.scores').innerHTML = 'Fetching scores..';
+	document.querySelector('.scores').classList.remove('hidden');
     document.querySelectorAll('canvas').forEach(c => c.classList.add('hidden'));
 
-	displayScores(json);
+	try {
+		const resp = await fetch(`${HOST}/api/scores`, {
+			method: 'GET',
+		});
+		const json = await resp.json();
+	
+		displayScores(json);
+	} catch (err) {
+		document.querySelector('.scores').innerHTML = 'Failed to fetch';
+	}
+	
 }
 
 export function hideLeaderboard() {
