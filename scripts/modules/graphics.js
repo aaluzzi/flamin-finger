@@ -1,14 +1,10 @@
-import { COLS, PATH, PATH_TAKEN, ROWS, WALL } from './grid.js';
+import { COLS, PATH, ROWS, WALL } from './grid.js';
 
-const gameCanvas = document.getElementById('game');
-const scoreCanvas = document.getElementById('score');
+const gameCanvas = document.querySelector('.game');
 const gameCtx = gameCanvas.getContext('2d');
-const scoreCtx = scoreCanvas.getContext('2d');
 
 gameCanvas.width = gameCanvas.offsetWidth;
 gameCanvas.height = gameCanvas.offsetHeight;
-scoreCanvas.width = scoreCanvas.offsetWidth;
-scoreCanvas.height = scoreCanvas.offsetHeight;
 
 const SQUARE_SIZE = gameCanvas.width / ROWS;
 
@@ -134,12 +130,7 @@ export function drawMenu() {
 }
 
 export function drawScore(score) {
-	scoreCtx.clearRect(0, 0, scoreCanvas.width, scoreCanvas.height);
-	scoreCtx.font = `${scoreCanvas.height * 1.25}px Clock`;
-	scoreCtx.fillStyle = 'red';
-	scoreCtx.textAlign = 'right';
-	scoreCtx.textBaseline = 'middle';
-	scoreCtx.fillText(score, scoreCanvas.width, scoreCanvas.height / 2);
+	document.querySelector('.score').textContent = score;
 }
 
 const MENU_GRID = [

@@ -106,13 +106,13 @@ function traversePath() {
     pathIndex++;
 }
 
-document.getElementById('game').addEventListener('click', e => {
+document.querySelector('.game').addEventListener('click', e => {
     if (status === "menu") {
         startGame();
     }
 });
 
-document.getElementById('game').addEventListener('mousemove', e => {
+document.querySelector('.game').addEventListener('mousemove', e => {
     if (status === "running") {
         let gridX = (e.offsetX / e.target.width * game.grid.length);
         let gridY = (e.offsetY / e.target.height * game.grid.length);
@@ -122,4 +122,4 @@ document.getElementById('game').addEventListener('mousemove', e => {
     }
 });
 
-document.getElementById('game').addEventListener('contextmenu', e => e.preventDefault());
+document.querySelector('.game').addEventListener('contextmenu', e => e.preventDefault());

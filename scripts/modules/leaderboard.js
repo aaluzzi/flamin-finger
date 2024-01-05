@@ -3,7 +3,8 @@ import { HOST } from '../script.js';
 export async function loadLeaderboard() {
 	document.querySelector('.scores').innerHTML = 'Fetching scores..';
 	document.querySelector('.scores').classList.remove('hidden');
-    document.querySelectorAll('canvas').forEach(c => c.classList.add('hidden'));
+    document.querySelector('.score').classList.add('hidden');
+	document.querySelector('.game').classList.add('hidden');
 
 	try {
 		const resp = await fetch(`${HOST}/api/scores`, {
@@ -20,7 +21,8 @@ export async function loadLeaderboard() {
 
 export function hideLeaderboard() {
     document.querySelector('.scores').classList.add('hidden');
-    document.querySelectorAll('canvas').forEach(c => c.classList.remove('hidden'));
+	document.querySelector('.score').classList.remove('hidden');
+	document.querySelector('.game').classList.remove('hidden');
 }
 
 function displayScores(users) {

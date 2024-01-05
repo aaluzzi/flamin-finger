@@ -36,7 +36,7 @@ body {
     border-right: 16px solid rgb(70, 70, 70);
 }
 
-canvas {
+.game,.score {
     max-width: 98%;
     background-color: black;
     border: 1vmin solid black;
@@ -44,14 +44,21 @@ canvas {
     cursor: grab;
 }
 
-#score {
+.score {
+    flex: 1;
+    font-size: 9vmin;
+    font-family: 'Clock';
+    color: red;
     max-width: 30%;
     aspect-ratio: 3 / 1;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
 }
 
-#game {
+.game {
     margin-bottom: 20px;
-    flex: 1;
+    flex: 10;
     aspect-ratio: 1 / 1;
 }
 
