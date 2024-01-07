@@ -8,7 +8,8 @@ async function fetchUserInfo() {
     if (searchParams.has('token')) {
         localStorage.setItem('token', searchParams.get('token'));
     }
-    if (localStorage.getItem('token')) {
+
+    if (localStorage.getItem('token') && !localStorage.getItem('user')) {
         try {
             const resp = await fetch(`${HOST}/api/user`, {
                 method: 'GET',
@@ -18,17 +19,24 @@ async function fetchUserInfo() {
             });
             const json = await resp.json();
     
-            if (json.highscore) {
-                setHighscore(json.highscore);
+            if (json.username) {
+                localStorage.setItem('user', JSON.stringify(json));
+                loadUser();
             }
-            document.querySelector('.sign-in').classList.add('hidden');
-            document.querySelector('.user').classList.remove('hidden');
-            document.querySelector('.user').textContent = `${json.name} (${json.username})`;
         } catch (err) {
-            document.querySelector('.sign-in').addEventListener('click', () => {
-                window.location.href = `${HOST}/login`
-            });
+            
         }
+    }
+}
+
+function loadUser() {
+    if (localStorage.getItem('user')) {
+        const user = JSON.parse(localStorage.getItem('user'));
+
+        document.querySelector('.sign-in').classList.add('hidden');
+        document.querySelector('.user').classList.remove('hidden');
+        document.querySelector('.user').textContent = `${user.name} (${user.username})`;
+        setHighscore(user.highscore);
     }
 }
 
@@ -48,6 +56,7 @@ export async function submitScore(score) {
     }
 }
 
+loadUser();
 fetchUserInfo();
 loadGame();
 
