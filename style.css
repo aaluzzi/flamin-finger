@@ -105,7 +105,7 @@ button:hover {
 .scores {
     background-color: black;
     color: red;
-    font-size: min(38px, 6vw);
+    font-size: min(32px, 5vw);
     font-family: 'Clock';
     background-color: black;
     border: 1vmin solid black;

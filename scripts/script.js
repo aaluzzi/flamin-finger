@@ -9,7 +9,7 @@ async function fetchUserInfo() {
         localStorage.setItem('token', searchParams.get('token'));
     }
 
-    if (localStorage.getItem('token') && !localStorage.getItem('user')) {
+    if (localStorage.getItem('token')) {
         try {
             const resp = await fetch(`${HOST}/api/user`, {
                 method: 'GET',
@@ -36,7 +36,8 @@ function loadUser() {
         document.querySelector('.sign-in').classList.add('hidden');
         document.querySelector('.user').classList.remove('hidden');
         document.querySelector('.user').textContent = `${user.name} (${user.username})`;
-        setHighscore(user.highscore);
+        setHighscore(Number(user.highscore));
+        console.log(user.highscore);
     }
 }
 

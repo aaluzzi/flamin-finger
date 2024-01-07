@@ -11,7 +11,6 @@ export async function loadLeaderboard() {
 			method: 'GET',
 		});
 		const json = await resp.json();
-	
 		displayScores(json);
 	} catch (err) {
 		document.querySelector('.scores').innerHTML = 'Failed to fetch';
@@ -35,6 +34,7 @@ function displayScores(users) {
     headerRow.appendChild(getTableHeader('Ranking'));
     headerRow.appendChild(getTableHeader('Username'));
     headerRow.appendChild(getTableHeader('Score'));
+	headerRow.appendChild(getTableHeader('Date'));
 
 	thead.appendChild(headerRow);
 	table.appendChild(thead);
@@ -48,6 +48,8 @@ function displayScores(users) {
         row.appendChild(getTableCell(index + 1));
         row.appendChild(getTableCell(user.username));
         row.appendChild(getTableCell(user.highscore));
+		row.appendChild(getTableCell(new Date(user.highscoreDate).toLocaleDateString('en-US', 
+			{ month: '2-digit', day: '2-digit', year: '2-digit' })));
     
         tbody.appendChild(row);
     });
