@@ -57,10 +57,10 @@ export function generatePath() {
             //empty current
             grid[current.x][current.y] = EMPTY;
 
-            let previous = path.pop();
+            let previous = path.pop()!;
             grid[previous.x][previous.y] = EMPTY;
 
-            current = path.pop();
+            current = path.pop()!;
         }
     }
     path.push(current);

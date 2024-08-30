@@ -1,4 +1,4 @@
-import { COLS, PATH, ROWS, WALL } from './grid.js';
+import { COLS, PATH, Point, ROWS, WALL } from './grid.js';
 
 let SQUARE_SIZE: number;
 
@@ -33,7 +33,7 @@ export class Graphics {
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	}
 
-	animateGridDraw(timestamp, grid, delay) {
+	animateGridDraw(timestamp: number, grid: number[][], delay: number) {
 		if (timestamp - lastShiftTime > delay) {
 			lastShiftTime = timestamp;
 
@@ -49,7 +49,7 @@ export class Graphics {
 		return true;
 	}
 
-	private drawDiagonalDown(grid, row, col) {
+	private drawDiagonalDown(grid: number[][], row: number, col: number) {
 		while (row < ROWS && col < COLS) {
 			if (grid[col][row] === WALL) {
 				this.drawCircle(col, row, '#ffd500');
@@ -59,7 +59,7 @@ export class Graphics {
 		}
 	}
 
-	animateGridClear(timestamp, delay) {
+	animateGridClear(timestamp: number, delay: number) {
 		if (timestamp - lastShiftTime > delay) {
 			lastShiftTime = timestamp;
 
@@ -75,7 +75,7 @@ export class Graphics {
 		return true;
 	}
 
-	private clearDiagonalDown(row, col) {
+	private clearDiagonalDown(row: number, col: number) {
 		while (row < ROWS && col < COLS) {
 			this.ctx.clearRect(col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
 			row++;
@@ -84,7 +84,7 @@ export class Graphics {
 	}
 
 
-	animatePath(timestamp, path, pathIndex) {
+	animatePath(timestamp: number, path: Point[], pathIndex: number) {
 		for (let i = 0; i <= pathIndex; i++) {
 			this.ctx.shadowBlur = 0;
 			this.ctx.clearRect(path[i].x * SQUARE_SIZE, path[i].y * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
@@ -103,7 +103,7 @@ export class Graphics {
 		}
 	}
 
-	private drawCircle(gridX, gridY, color) {
+	private drawCircle(gridX: number, gridY: number, color: string) {
 		this.ctx.beginPath();
 		this.ctx.fillStyle = color;
 		this.ctx.shadowOffsetX = 0;
@@ -120,7 +120,7 @@ export class Graphics {
 		this.ctx.fill();
 	}
 
-	drawTimer(timeLeft) {
+	drawTimer(timeLeft: number) {
 		this.ctx.clearRect(SQUARE_SIZE * 15, SQUARE_SIZE * 17, SQUARE_SIZE * 7, SQUARE_SIZE * 3);
 		const scaledSize = this.canvas.height / 11;
 		this.ctx.font = `${scaledSize}px Clock`;
