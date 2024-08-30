@@ -1,5 +1,5 @@
 import { playEndSound, playMazeMusic, playMenuMusic, playStartSound, playSwitchSound, playTraverseSound, stopMazeMusic, stopMenuMusic } from "./sounds";
-import { generatePath, PATH_TAKEN, Point } from "./grid";
+import { Maze } from "./maze";
 import { Graphics } from "./graphics";
 
 type Status = 'menu' | 'starting' | 'running' | 'start_switch' | 'end_switch' | 'losing';
@@ -7,9 +7,7 @@ type Status = 'menu' | 'starting' | 'running' | 'start_switch' | 'end_switch' | 
 export class Game {
     private graphics: Graphics;
     private status: Status;
-    private grid: number[][] = [];
-    private path: Point[] = [];
-    private pathIndex: number = 0;
+    private maze: Maze;
 
     private score = 0;
     private setElementScore;
@@ -21,8 +19,10 @@ export class Game {
 
     constructor(canvas: HTMLCanvasElement, setElementScore: (score: number) => void, submitScore: (score: number) => void) {
         this.status = 'menu';
+        this.maze = new Maze();
         this.graphics = new Graphics(canvas); 
         this.graphics.drawMenu();
+
         this.setElementScore = setElementScore;
         this.submitScore = submitScore;
         playMenuMusic();
@@ -31,7 +31,7 @@ export class Game {
     private gameLoop = (timestamp: number) => {
         if (this.status === 'starting') {
             this.graphics.beginGridAnimation();
-            this.graphics.animateGridDraw(timestamp, this.grid, 15)
+            this.graphics.animateGridDraw(timestamp, this.maze.grid, 15)
             if (this.graphics.gridAnimationFinished()) {
                 this.status = 'running';
                 this.mazeStartTime = Date.now();
@@ -39,7 +39,7 @@ export class Game {
                 playMazeMusic();
             }
         } else if (this.status === 'running') {
-            this.graphics.animatePath(timestamp, this.path, this.pathIndex);
+            this.graphics.animatePath(timestamp, this.maze.path, this.maze.pathIndex);
             this.graphics.drawTimer(this.timerLengthSeconds - ((Date.now() - this.mazeStartTime) / 1000));
         } else if (this.status === 'losing') {
             this.graphics.beginGridAnimation();
@@ -58,7 +58,7 @@ export class Game {
             }
         } else if (this.status === 'end_switch') {
             this.graphics.beginGridAnimation();
-            this.graphics.animateGridDraw(timestamp, this.grid, 5)
+            this.graphics.animateGridDraw(timestamp, this.maze.grid, 5)
             if (this.graphics.gridAnimationFinished()) {
                 this.status = 'running';
                 this.mazeStartTime = Date.now();
@@ -80,15 +80,12 @@ export class Game {
     }
 
     startMaze = () => {
-        const game = generatePath();
-        this.grid = game.grid;
-        this.path = game.path;
-        this.pathIndex = 2;
-        this.timerLengthSeconds = game.path.length / (6 + (this.score / 2));
+        this.maze.generate()
+        this.timerLengthSeconds = this.maze.path.length / (6 + (this.score / 2));
         this.graphics.clearDisplay();
     }
 
-    finishMaze = () => {
+    onMazeFinish = () => {
         playSwitchSound();
         clearTimeout(this.mazeTimerId);
         this.status = 'start_switch';
@@ -104,24 +101,22 @@ export class Game {
     }
 
     traversePath = () => {
-        this.grid[this.path[this.pathIndex].x][this.path[this.pathIndex].y] = PATH_TAKEN;
-        if (this.pathIndex % 2 === 0) {
+        this.maze.traverseByOne();
+        if (this.maze.pathIndex % 2 === 0) {
             playTraverseSound();
         }
 
-        if (this.pathIndex === this.path.length - 1) {
-            this.finishMaze();
-            return;
-        }
-        this.pathIndex++;
+        if (this.maze.traversedFully()) {
+            this.onMazeFinish();
+        }   
     }
 
     handleMouseMove = (e : React.MouseEvent<HTMLCanvasElement>) => {
         if (this.status === 'running') {
-            let gridX = (e.nativeEvent.offsetX / this.graphics.getCanvas().width * this.grid.length);
-            let gridY = (e.nativeEvent.offsetY / this.graphics.getCanvas().height * this.grid.length);
-            if (Math.abs(this.path[this.pathIndex].x + 0.5 - gridX) < 1.6 &&
-                Math.abs(this.path[this.pathIndex].y + 0.5 - gridY) < 1.6) {
+            let gridX = (e.nativeEvent.offsetX / this.graphics.getCanvas().width * this.maze.grid.length);
+            let gridY = (e.nativeEvent.offsetY / this.graphics.getCanvas().height * this.maze.grid.length);
+            if (Math.abs(this.maze.path[this.maze.pathIndex].x + 0.5 - gridX) < 1.6 &&
+                Math.abs(this.maze.path[this.maze.pathIndex].y + 0.5 - gridY) < 1.6) {
                 this.traversePath();
             }
         }

@@ -1,4 +1,4 @@
-import { COLS, PATH, Point, ROWS, WALL } from './grid.js';
+import { Cell, Point, COLS, ROWS, } from './maze.js';
 
 export class Graphics {
 
@@ -38,11 +38,11 @@ export class Graphics {
 		return !this.gridAnimating;
 	}
 
-	animateGridDraw(timestamp: number, grid: number[][], frameDelay: number) {
+	animateGridDraw(timestamp: number, grid: Cell[][], frameDelay: number) {
 		if (timestamp - this.lastDrawTime > frameDelay) {
 			this.lastDrawTime = timestamp;
 			this.drawDiagonalDown(grid, this.cursorRow, this.cursorCol);
-			
+
 			if (this.cursorRow > 0) {
 				this.cursorRow--;
 			} else if (this.cursorCol < COLS - 1) {
@@ -53,9 +53,9 @@ export class Graphics {
 		}
 	}
 
-	private drawDiagonalDown(grid: number[][], row: number, col: number) {
+	private drawDiagonalDown(grid: Cell[][], row: number, col: number) {
 		while (row < ROWS && col < COLS) {
-			if (grid[col][row] === WALL) {
+			if (grid[col][row] === Cell.WALL) {
 				this.drawCircle(col, row, '#ffd500');
 			}
 			row++;
@@ -135,9 +135,9 @@ export class Graphics {
 	drawMenu() {
 		for (let row = 0; row < MENU_GRID.length; row++) {
 			for (let col = 0; col < MENU_GRID[row].length; col++) {
-				if (MENU_GRID[row][col] === WALL) {
+				if (MENU_GRID[row][col] === Cell.WALL) {
 					this.drawCircle(col, row, "yellow");
-				} else if (MENU_GRID[row][col] === PATH) {
+				} else if (MENU_GRID[row][col] === Cell.PATH) {
 					this.drawCircle(col, row, "red");
 				}
 			}
