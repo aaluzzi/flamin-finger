@@ -30,7 +30,9 @@ export class Game {
 
     private gameLoop = (timestamp: number) => {
         if (this.status === 'starting') {
-            if (!this.graphics.animateGridDraw(timestamp, this.grid, 15)) {
+            this.graphics.beginGridAnimation();
+            this.graphics.animateGridDraw(timestamp, this.grid, 15)
+            if (this.graphics.gridAnimationFinished()) {
                 this.status = 'running';
                 this.mazeStartTime = Date.now();
                 this.mazeTimerId = window.setTimeout(() => this.loseGame(), this.timerLengthSeconds * 1000);
@@ -40,18 +42,24 @@ export class Game {
             this.graphics.animatePath(timestamp, this.path, this.pathIndex);
             this.graphics.drawTimer(this.timerLengthSeconds - ((Date.now() - this.mazeStartTime) / 1000));
         } else if (this.status === 'losing') {
-            if (!this.graphics.animateGridClear(timestamp, 25)) {
+            this.graphics.beginGridAnimation();
+            this.graphics.animateGridClear(timestamp, 25)
+            if (this.graphics.gridAnimationFinished()) {
                 this.status = 'menu';
                 this.graphics.drawMenu();
                 playMenuMusic();
             }
         } else if (this.status === 'start_switch') {
-            if (!this.graphics.animateGridClear(timestamp, 5)) {
+            this.graphics.beginGridAnimation();
+            this.graphics.animateGridClear(timestamp, 5);
+            if (this.graphics.gridAnimationFinished()) {
                 this.startMaze();
                 this.status = 'end_switch';
             }
         } else if (this.status === 'end_switch') {
-            if (!this.graphics.animateGridDraw(timestamp, this.grid, 15)) {
+            this.graphics.beginGridAnimation();
+            this.graphics.animateGridDraw(timestamp, this.grid, 5)
+            if (this.graphics.gridAnimationFinished()) {
                 this.status = 'running';
                 this.mazeStartTime = Date.now();
                 this.mazeTimerId = window.setTimeout(() => this.loseGame(), this.timerLengthSeconds * 1000);

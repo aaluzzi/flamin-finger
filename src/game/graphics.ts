@@ -1,28 +1,25 @@
 import { COLS, PATH, Point, ROWS, WALL } from './grid.js';
 
-let SQUARE_SIZE: number;
-
-const clockFont = new FontFace('Clock', 'url(/clock.ttf)');
-
-clockFont.load().then((font) => document.fonts.add(font));
-
-//TODO avoid these global variables
-let lastShiftTime = 0;
-let row = ROWS - 1;
-let col = 0;
-let offset = 0;
-
 export class Graphics {
 
 	private canvas: HTMLCanvasElement;
 	private ctx: CanvasRenderingContext2D;
+	private cursorRow = ROWS - 1;
+	private cursorCol = 0;
+	private pathOffset = 0;
+	private lastDrawTime = 0;
+	private gridAnimating = false;
+	private SQUARE_SIZE: number;
 
 	constructor(canvas: HTMLCanvasElement) {
 		this.canvas = canvas;
 		this.ctx = canvas.getContext('2d')!;
 		canvas.width = canvas.offsetWidth;
 		canvas.height = canvas.offsetHeight;
-		SQUARE_SIZE = canvas.width / ROWS;
+		this.SQUARE_SIZE = canvas.width / ROWS;
+
+		const clockFont = new FontFace('Clock', 'url(/clock.ttf)');
+		clockFont.load().then((font) => document.fonts.add(font));
 	}
 
 	getCanvas() {
@@ -33,20 +30,27 @@ export class Graphics {
 		this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 	}
 
-	animateGridDraw(timestamp: number, grid: number[][], delay: number) {
-		if (timestamp - lastShiftTime > delay) {
-			lastShiftTime = timestamp;
+	beginGridAnimation() {
+		this.gridAnimating = true;
+	}
 
-			this.drawDiagonalDown(grid, row, col);
-			if (row > 0) {
-				row--;
-			} else if (col < COLS - 1) {
-				col++;
+	gridAnimationFinished() {
+		return !this.gridAnimating;
+	}
+
+	animateGridDraw(timestamp: number, grid: number[][], frameDelay: number) {
+		if (timestamp - this.lastDrawTime > frameDelay) {
+			this.lastDrawTime = timestamp;
+			this.drawDiagonalDown(grid, this.cursorRow, this.cursorCol);
+			
+			if (this.cursorRow > 0) {
+				this.cursorRow--;
+			} else if (this.cursorCol < COLS - 1) {
+				this.cursorCol++;
 			} else {
-				return false; //done drawing
+				this.gridAnimating = false;
 			}
 		}
-		return true;
 	}
 
 	private drawDiagonalDown(grid: number[][], row: number, col: number) {
@@ -59,47 +63,45 @@ export class Graphics {
 		}
 	}
 
-	animateGridClear(timestamp: number, delay: number) {
-		if (timestamp - lastShiftTime > delay) {
-			lastShiftTime = timestamp;
+	animateGridClear(timestamp: number, frameDelay: number) {
+		if (timestamp - this.lastDrawTime > frameDelay) {
+			this.lastDrawTime = timestamp;
+			this.clearDiagonalDown(this.cursorRow, this.cursorCol);
 
-			this.clearDiagonalDown(row, col);
-			if (col > 0) {
-				col--;
-			} else if (row < COLS - 1) {
-				row++;
+			if (this.cursorCol > 0) {
+				this.cursorCol--;
+			} else if (this.cursorRow < COLS - 1) {
+				this.cursorRow++;
 			} else {
-				return false; //done clearing
+				this.gridAnimating = false;
 			}
 		}
-		return true;
 	}
 
 	private clearDiagonalDown(row: number, col: number) {
 		while (row < ROWS && col < COLS) {
-			this.ctx.clearRect(col * SQUARE_SIZE, row * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
+			this.ctx.clearRect(col * this.SQUARE_SIZE, row * this.SQUARE_SIZE, this.SQUARE_SIZE, this.SQUARE_SIZE);
 			row++;
 			col++;
 		}
 	}
 
-
 	animatePath(timestamp: number, path: Point[], pathIndex: number) {
 		for (let i = 0; i <= pathIndex; i++) {
 			this.ctx.shadowBlur = 0;
-			this.ctx.clearRect(path[i].x * SQUARE_SIZE, path[i].y * SQUARE_SIZE, SQUARE_SIZE, SQUARE_SIZE);
+			this.ctx.clearRect(path[i].x * this.SQUARE_SIZE, path[i].y * this.SQUARE_SIZE, this.SQUARE_SIZE, this.SQUARE_SIZE);
 		}
-		for (let i = offset; i < pathIndex - 1; i += 8) {
+		for (let i = this.pathOffset; i < pathIndex - 1; i += 8) {
 			this.drawCircle(path[i].x, path[i].y, 'red');
 			this.drawCircle(path[i + 1].x, path[i + 1].y, 'red');
 		}
 		//always show head position
 		this.drawCircle(path[pathIndex - 1].x, path[pathIndex - 1].y, 'red');
 
-		if (timestamp - lastShiftTime >= 22 - (5 * pathIndex) / path.length) {
-			offset++;
-			offset %= 8;
-			lastShiftTime = timestamp;
+		if (timestamp - this.lastDrawTime >= 22 - (5 * pathIndex) / path.length) {
+			this.pathOffset++;
+			this.pathOffset %= 8;
+			this.lastDrawTime = timestamp;
 		}
 	}
 
@@ -108,12 +110,12 @@ export class Graphics {
 		this.ctx.fillStyle = color;
 		this.ctx.shadowOffsetX = 0;
 		this.ctx.shadowOffsetY = 0;
-		this.ctx.shadowBlur = SQUARE_SIZE / 6;
+		this.ctx.shadowBlur = this.SQUARE_SIZE / 6;
 		this.ctx.shadowColor = color;
 		this.ctx.arc(
-			SQUARE_SIZE * gridX + SQUARE_SIZE / 2,
-			SQUARE_SIZE * gridY + SQUARE_SIZE / 2,
-			SQUARE_SIZE / 3.5,
+			this.SQUARE_SIZE * gridX + this.SQUARE_SIZE / 2,
+			this.SQUARE_SIZE * gridY + this.SQUARE_SIZE / 2,
+			this.SQUARE_SIZE / 3.5,
 			0,
 			2 * Math.PI
 		);
@@ -121,7 +123,7 @@ export class Graphics {
 	}
 
 	drawTimer(timeLeft: number) {
-		this.ctx.clearRect(SQUARE_SIZE * 15, SQUARE_SIZE * 17, SQUARE_SIZE * 7, SQUARE_SIZE * 3);
+		this.ctx.clearRect(this.SQUARE_SIZE * 15, this.SQUARE_SIZE * 17, this.SQUARE_SIZE * 7, this.SQUARE_SIZE * 3);
 		const scaledSize = this.canvas.height / 11;
 		this.ctx.font = `${scaledSize}px Clock`;
 		this.ctx.fillStyle = 'red';
