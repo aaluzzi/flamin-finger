@@ -1,25 +1,14 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <title>Flamin' Finger</title>
     <meta property="og:title" content="Flamin' Finger">
     <meta property="og:description" content="A revival of the classic 2003 arcade game">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="header">
-        <button class="play hidden">Back To Game</button>
-        <button class="leaderboard">Leaderboard</button>
-        <button class="sign-in"><a href="https://flamin-finger-backend.fly.dev/login">Sign In</a></button>
-        <div class="user hidden"></div>
-    </div>
-    <div class="cabinet">
-        <div class="score">0</div>
-        <canvas class="game"></canvas>
-        <div class="scores hidden"></div>
-    </div>
-    <script type="module" src="./scripts/script.js"></script>
-</body>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
 </html>

@@ -6,11 +6,13 @@ export const WALL = 1;
 export const PATH = 2;
 export const PATH_TAKEN = 3;
 
+export type Point = {x: number, y: number};
+
 export function generatePath() {
-    let grid = Array.from({ length: ROWS}, () => Array(COLS).fill(EMPTY));
-    let visited = Array.from({ length: ROWS}, () => Array(COLS).fill(false));
-    let current = {x: 1, y: grid.length - 2}; //account for the outer walls
-    let path = [];
+    let grid: number[][] = Array.from({ length: ROWS}, () => Array(COLS).fill(EMPTY));
+    let visited: boolean[][] = Array.from({ length: ROWS}, () => Array(COLS).fill(false));
+    let current: Point = {x: 1, y: grid.length - 2}; //account for the outer walls
+    let path: Point[] = [];
 
     //prevent from generating on timer area
     for (let x = 15; x < 22; x++) {
@@ -75,7 +77,7 @@ export function generatePath() {
     return {grid, path};
 }
 
-function surroundWithWalls(current, grid) {
+function surroundWithWalls(current: Point, grid: number[][]): void {
     if (grid[current.x + 1][current.y] === EMPTY) {
         grid[current.x + 1][current.y] = WALL;
         grid[current.x + 1][current.y + 1] = WALL;
@@ -94,8 +96,8 @@ function surroundWithWalls(current, grid) {
     }
 }
 
-function getEmptyNeighbors(current, grid, visited) {
-    let neighbors = [];
+function getEmptyNeighbors(current: Point, grid: number[][], visited: boolean[][]) {
+    let neighbors: Point[] = [];
 
     //Add twice to bias the path towards the top right
     if (current.x < grid.length - 2 && grid[current.x + 2][current.y] === EMPTY && !visited[current.x + 2][current.y]) {

@@ -1,17 +1,17 @@
-const MENU_SONG = new Audio('../resources/audio/music/menu.mp3');
+const MENU_SONG = new Audio('/audio/music/menu.mp3');
 MENU_SONG.volume = 0.10;
 const GAME_SONGS = [];
 
-const TRAVERSE = new Audio('../resources/audio/sounds/traverse.wav');
+const TRAVERSE = new Audio('/audio/sounds/traverse.wav');
 TRAVERSE.volume = 0.05;
-const SWITCH = new Audio('../resources/audio/sounds/switch.wav');
+const SWITCH = new Audio('/audio/sounds/switch.wav');
 SWITCH.volume = 0.15;
 
 const STARTS = [];
 const ENDS = [];
 
 for (let i = 0; i < 3; i++) {
-    GAME_SONGS[i] = new Audio(`../resources/audio/music/maze${i}.mp3`);
+    GAME_SONGS[i] = new Audio(`/audio/music/maze${i}.mp3`);
     GAME_SONGS[i].volume = 0.10;
     GAME_SONGS[i].addEventListener('ended', () => {
         GAME_SONGS[i].play();
@@ -19,15 +19,16 @@ for (let i = 0; i < 3; i++) {
 }
 
 for (let i = 0; i < 8; i++) {
-    STARTS[i] = new Audio(`../resources/audio/sounds/start/${i}.wav`);
+    STARTS[i] = new Audio(`/audio/sounds/start/${i}.wav`);
     STARTS[i].volume = 0.15;
-    ENDS[i] = new Audio(`../resources/audio/sounds/end/${i}.wav`);
+    ENDS[i] = new Audio(`/audio/sounds/end/${i}.wav`);
     ENDS[i].volume = 0.15;
 }
 
 
 let songIndex = 0;
 export function playMazeMusic() {
+    console.log('maze music')
     songIndex = Math.floor(Math.random() * GAME_SONGS.length);
     GAME_SONGS[songIndex].currentTime = 0;
     GAME_SONGS[songIndex].play();
