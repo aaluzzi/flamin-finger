@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import Game from './components/Game'
+import Leaderboard from './components/Leaderboard';
 
 export const HOST = 'https://flamin-finger-backend.fly.dev'
 
@@ -7,6 +8,7 @@ function App() {
   //TODO don't use any type
   const [user, setUser] = useState<any>(null);
   const [highscore, setHighscore] = useState(0);
+  const [showLeaderboard, setShowLeaderboard] = useState(false);
 
   const fetchUserInfo = async () => {
     const searchParams = new URLSearchParams(window.location.search);
@@ -69,16 +71,22 @@ function App() {
   return (
     <>
       <div className="header">
-        <button className="play hidden">Back To Game</button>
-        <button className="leaderboard">Leaderboard</button>
+        <button className="leaderboard" onClick={() => setShowLeaderboard(showLeaderboard => !showLeaderboard)}>
+          {showLeaderboard ?
+            "Back To Game"
+            : "Leaderboard"
+          }
+        </button>
         {user
           ? <div className="user">{`${user.name} (${user.username})`}</div>
           : <button className="sign-in"><a href={`${HOST}/login`}>Sign In</a></button>
         }
       </div>
       <div className="cabinet">
-        <Game submitScore={submitScore} />
-        <div className="scores hidden"></div>
+        {showLeaderboard
+          ? <Leaderboard />
+          : <Game submitScore={submitScore} />
+        }
       </div>
     </>
   )
