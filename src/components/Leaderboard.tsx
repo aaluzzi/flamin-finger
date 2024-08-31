@@ -27,7 +27,7 @@ export default function Leaderboard() {
     }, []);
 
     return (
-        <div className="scores">
+        <div className="h-full w-full p-4 text-[min(32px,5vmin)] text-red-500 font-clock text-center bg-black rounded-xl">
             {users.length > 0
                 ? <table>
                     <thead>

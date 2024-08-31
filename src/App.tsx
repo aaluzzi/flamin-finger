@@ -70,19 +70,19 @@ function App() {
 
   return (
     <>
-      <div className="header">
-        <button className="leaderboard" onClick={() => setShowLeaderboard(showLeaderboard => !showLeaderboard)}>
+      <div className="text-white h-12 w-full py-4 px-6 bg-stone-900 flex justify-between items-center">
+        <button className="hover:underline" onClick={() => setShowLeaderboard(showLeaderboard => !showLeaderboard)}>
           {showLeaderboard ?
             "Back To Game"
             : "Leaderboard"
           }
         </button>
         {user
-          ? <div className="user">{`${user.name} (${user.username})`}</div>
-          : <button className="sign-in"><a href={`${HOST}/login`}>Sign In</a></button>
+          ? <div>{`${user.name} (${user.username})`}</div>
+          : <button className="hover:underline"><a href={`${HOST}/login`}>Sign In</a></button>
         }
       </div>
-      <div className="cabinet">
+      <div className="flex-1 max-w-[100vmin] w-full p-4 gap-4 bg-orange-700 flex flex-col items-center border-l-[8px] border-r-[8px] border-stone-700">
         {showLeaderboard
           ? <Leaderboard />
           : <Game submitScore={submitScore} />
