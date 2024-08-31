@@ -17,10 +17,10 @@ export class Game {
     private mazeTimerId: number = 0;
     private mazeStartTime: number = Date.now();
 
-    constructor(canvas: HTMLCanvasElement, setElementScore: (score: number) => void, submitScore: (score: number) => void) {
+    constructor(canvas: HTMLCanvasElement, dimension: number, setElementScore: (score: number) => void, submitScore: (score: number) => void) {
         this.status = 'menu';
-        this.maze = new Maze();
-        this.graphics = new Graphics(canvas); 
+        this.maze = new Maze(dimension);
+        this.graphics = new Graphics(canvas, dimension); 
         this.graphics.drawMenu();
 
         this.setElementScore = setElementScore;

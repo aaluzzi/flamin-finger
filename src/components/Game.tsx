@@ -7,7 +7,7 @@ export default function GameComponent({ submitScore } : { submitScore: (score: n
     const [score, setScore] = useState(0);
 
     useEffect(() => {       
-        setGame(new Game(canvasRef.current!, setScore, submitScore));
+        setGame(new Game(canvasRef.current!, 37, setScore, submitScore));
     }, []);
 
     return (

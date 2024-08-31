@@ -1,8 +1,4 @@
-export const ROWS = 37;
-export const COLS = 37;
-
 export type Point = { x: number, y: number };
-
 export enum Cell {
     EMPTY, WALL, PATH, PATH_TAKEN
 };
@@ -13,8 +9,8 @@ export class Maze {
     private _path: Point[];
     private _pathIndex: number;
 
-    constructor() {
-        this._grid = Array.from({ length: ROWS }, () => Array(COLS).fill(Cell.EMPTY));
+    constructor(dimension: number) {
+        this._grid = Array.from({ length: dimension }, () => Array(dimension).fill(Cell.EMPTY));
         this._path = [];
         this._pathIndex = 2;
         this.generate();
@@ -46,8 +42,9 @@ export class Maze {
         this._path.length = 0;
         this._pathIndex = 2;
 
-        let visited: boolean[][] = Array.from({ length: ROWS }, () => Array(COLS).fill(false));
+        let visited: boolean[][] = Array.from({ length: this._grid.length }, () => Array(this._grid.length).fill(false));
         let current: Point = { x: 1, y: this._grid.length - 2 }; //account for the outer walls
+
         //prevent from generating on timer area
         for (let x = 15; x < 22; x++) {
             for (let y = 17; y < 20; y++) {
@@ -58,7 +55,6 @@ export class Maze {
         this._grid[current.x][current.y + 1] = Cell.PATH_TAKEN;
         this._path.push({ x: current.x, y: current.y + 1 });
         this._grid[current.x][current.y] = Cell.PATH_TAKEN;
-
         while (current.x !== this._grid[0].length - 2 || current.y !== 1) {
             let neighbors = this.getEmptyNeighbors(current, this._grid, visited);
             if (neighbors.length > 0) {

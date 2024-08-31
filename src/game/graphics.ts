@@ -1,22 +1,25 @@
-import { Cell, Point, COLS, ROWS, } from './maze.js';
+import { Cell, Point } from './maze.js';
 
 export class Graphics {
-
-	private canvas: HTMLCanvasElement;
-	private ctx: CanvasRenderingContext2D;
-	private cursorRow = ROWS - 1;
+	private readonly canvas: HTMLCanvasElement;
+	private readonly ctx: CanvasRenderingContext2D;
+	private readonly DIMENSION: number;
+	private readonly SQUARE_SIZE: number;
+	private cursorRow;
 	private cursorCol = 0;
 	private pathOffset = 0;
 	private lastDrawTime = 0;
 	private gridAnimating = false;
-	private SQUARE_SIZE: number;
 
-	constructor(canvas: HTMLCanvasElement) {
+	constructor(canvas: HTMLCanvasElement, dimension: number) {
 		this.canvas = canvas;
 		this.ctx = canvas.getContext('2d')!;
 		canvas.width = canvas.offsetWidth;
 		canvas.height = canvas.offsetHeight;
-		this.SQUARE_SIZE = canvas.width / ROWS;
+		this.DIMENSION = dimension;
+		this.cursorRow = dimension - 1;
+		this.cursorCol = 0;
+		this.SQUARE_SIZE = canvas.width / dimension;
 
 		const clockFont = new FontFace('Clock', 'url(/clock.ttf)');
 		clockFont.load().then((font) => document.fonts.add(font));
@@ -45,7 +48,7 @@ export class Graphics {
 
 			if (this.cursorRow > 0) {
 				this.cursorRow--;
-			} else if (this.cursorCol < COLS - 1) {
+			} else if (this.cursorCol < this.DIMENSION - 1) {
 				this.cursorCol++;
 			} else {
 				this.gridAnimating = false;
@@ -54,7 +57,7 @@ export class Graphics {
 	}
 
 	private drawDiagonalDown(grid: Cell[][], row: number, col: number) {
-		while (row < ROWS && col < COLS) {
+		while (row < this.DIMENSION && col < this.DIMENSION) {
 			if (grid[col][row] === Cell.WALL) {
 				this.drawCircle(col, row, '#ffd500');
 			}
@@ -70,7 +73,7 @@ export class Graphics {
 
 			if (this.cursorCol > 0) {
 				this.cursorCol--;
-			} else if (this.cursorRow < COLS - 1) {
+			} else if (this.cursorRow < this.DIMENSION - 1) {
 				this.cursorRow++;
 			} else {
 				this.gridAnimating = false;
@@ -79,7 +82,7 @@ export class Graphics {
 	}
 
 	private clearDiagonalDown(row: number, col: number) {
-		while (row < ROWS && col < COLS) {
+		while (row < this.DIMENSION && col < this.DIMENSION) {
 			this.ctx.clearRect(col * this.SQUARE_SIZE, row * this.SQUARE_SIZE, this.SQUARE_SIZE, this.SQUARE_SIZE);
 			row++;
 			col++;
