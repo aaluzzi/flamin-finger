@@ -1,25 +1,29 @@
 import { useRef, useEffect, useState } from 'react';
 import { Game } from '../game/game';
+import NumberDisplay from './NumberDisplay';
+import { Graphics } from '../game/graphics';
 
-export default function GameComponent({ submitScore }: { submitScore: (score: number) => void }) {
+const MOUSE_DIMENSION = 37;
+
+export default function MouseGame({ submitScore }: { submitScore: (score: number) => void }) {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [game, setGame] = useState<Game | null>(null);
     const [score, setScore] = useState(0);
 
     useEffect(() => {
-        setGame(new Game(canvasRef.current!, 37, setScore, submitScore));
+        const graphics = new Graphics(canvasRef.current!, MOUSE_DIMENSION);
+        setGame(new Game(graphics, MOUSE_DIMENSION, setScore, submitScore, false));
     }, []);
 
     return (
         <>
-            <div className="px-2 leading-none text-[72px] w-[160px] font-clock text-red-500 text-right bg-black rounded-xl select-none">
-                {score}
-            </div>
+            <NumberDisplay number={score} />
             <canvas
                 ref={canvasRef}
                 className="h-[min(90vw,calc(93vh-128px))] p-2 bg-black rounded-xl aspect-square cursor-grab"
                 onClick={game?.handleClick}
-                onMouseMove={game?.handleMouseMove}
+                onPointerMove={game?.handlePointerMove}   
+                onContextMenu={(e) => e.preventDefault()}
             />
         </>
     );

@@ -16,6 +16,11 @@ export class Graphics {
 		this.ctx = canvas.getContext('2d')!;
 		canvas.width = canvas.offsetWidth;
 		canvas.height = canvas.offsetHeight;
+
+		const scale = window.devicePixelRatio || 1;
+		canvas.width = canvas.clientWidth * scale;
+		canvas.height = canvas.clientHeight * scale;
+		
 		this.DIMENSION = dimension;
 		this.cursorRow = dimension - 1;
 		this.cursorCol = 0;
@@ -108,17 +113,17 @@ export class Graphics {
 		}
 	}
 
-	private drawCircle(gridX: number, gridY: number, color: string) {
+	private drawCircle(gridX: number, gridY: number, color: string, SQUARE_SIZE=this.SQUARE_SIZE) {
 		this.ctx.beginPath();
 		this.ctx.fillStyle = color;
 		this.ctx.shadowOffsetX = 0;
 		this.ctx.shadowOffsetY = 0;
-		this.ctx.shadowBlur = this.SQUARE_SIZE / 6;
+		this.ctx.shadowBlur = SQUARE_SIZE / 6;
 		this.ctx.shadowColor = color;
 		this.ctx.arc(
-			this.SQUARE_SIZE * gridX + this.SQUARE_SIZE / 2,
-			this.SQUARE_SIZE * gridY + this.SQUARE_SIZE / 2,
-			this.SQUARE_SIZE / 3.5,
+			SQUARE_SIZE * gridX + SQUARE_SIZE / 2,
+			SQUARE_SIZE * gridY + SQUARE_SIZE / 2,
+			SQUARE_SIZE / 3.5,
 			0,
 			2 * Math.PI
 		);
@@ -136,12 +141,13 @@ export class Graphics {
 	}
 
 	drawMenu() {
+		const desktopSquareSize = this.canvas.width / 37;
 		for (let row = 0; row < MENU_GRID.length; row++) {
 			for (let col = 0; col < MENU_GRID[row].length; col++) {
 				if (MENU_GRID[row][col] === Cell.WALL) {
-					this.drawCircle(col, row, "yellow");
+					this.drawCircle(col, row, "yellow", desktopSquareSize);
 				} else if (MENU_GRID[row][col] === Cell.PATH) {
-					this.drawCircle(col, row, "red");
+					this.drawCircle(col, row, "red", desktopSquareSize);
 				}
 			}
 		}

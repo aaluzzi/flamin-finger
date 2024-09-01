@@ -11,6 +11,8 @@ html,body {
     height: 100%;
     background-color: #292524;
     margin: 0;
+    overflow: hidden;
+    touch-action: none;
 }
 
 body,#root {

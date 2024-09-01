@@ -16,12 +16,15 @@ export class Game {
     private timerLengthSeconds: number = 0;
     private mazeTimerId: number = 0;
     private mazeStartTime: number = Date.now();
+    private touchControls: boolean;
 
-    constructor(canvas: HTMLCanvasElement, dimension: number, setElementScore: (score: number) => void, submitScore: (score: number) => void) {
+    constructor(graphics: Graphics, dimension: number, setElementScore: (score: number) => void, submitScore: (score: number) => void, touchControls: boolean) {
         this.status = 'menu';
-        this.maze = new Maze(dimension);
-        this.graphics = new Graphics(canvas, dimension); 
+        this.maze = new Maze(dimension, touchControls);
+        this.graphics = graphics;
         this.graphics.drawMenu();
+
+        this.touchControls = touchControls;
 
         this.setElementScore = setElementScore;
         this.submitScore = submitScore;
@@ -29,7 +32,10 @@ export class Game {
     }
 
     private gameLoop = (timestamp: number) => {
-        if (this.status === 'starting') {
+        if (this.status === 'running') {
+            this.graphics.animatePath(timestamp, this.maze.path, this.maze.pathIndex);
+            this.graphics.drawTimer(this.timerLengthSeconds - ((Date.now() - this.mazeStartTime) / 1000));
+        } else if (this.status === 'starting') {
             this.graphics.beginGridAnimation();
             this.graphics.animateGridDraw(timestamp, this.maze.grid, 15)
             if (this.graphics.gridAnimationFinished()) {
@@ -38,9 +44,6 @@ export class Game {
                 this.mazeTimerId = window.setTimeout(() => this.loseGame(), this.timerLengthSeconds * 1000);
                 playMazeMusic();
             }
-        } else if (this.status === 'running') {
-            this.graphics.animatePath(timestamp, this.maze.path, this.maze.pathIndex);
-            this.graphics.drawTimer(this.timerLengthSeconds - ((Date.now() - this.mazeStartTime) / 1000));
         } else if (this.status === 'losing') {
             this.graphics.beginGridAnimation();
             this.graphics.animateGridClear(timestamp, 25)
@@ -102,23 +105,42 @@ export class Game {
 
     traversePath = () => {
         this.maze.traverseByOne();
-        if (this.maze.pathIndex % 2 === 0) {
+        //disable sound for now (laggy on IOS)
+        if (this.maze.pathIndex % 2 === 0 && !this.touchControls) {
             playTraverseSound();
         }
 
         if (this.maze.traversedFully()) {
             this.onMazeFinish();
-        }   
+        }
     }
 
-    handleMouseMove = (e : React.MouseEvent<HTMLCanvasElement>) => {
+    private lastPointerX = 0;
+    private lastPointerY = 0;
+
+    handlePointerMove = (e: React.PointerEvent<HTMLCanvasElement>) => {
         if (this.status === 'running') {
-            let gridX = (e.nativeEvent.offsetX / this.graphics.getCanvas().width * this.maze.grid.length);
-            let gridY = (e.nativeEvent.offsetY / this.graphics.getCanvas().height * this.maze.grid.length);
-            if (Math.abs(this.maze.path[this.maze.pathIndex].x + 0.5 - gridX) < 1.6 &&
-                Math.abs(this.maze.path[this.maze.pathIndex].y + 0.5 - gridY) < 1.6) {
-                this.traversePath();
+            const canvas = this.graphics.getCanvas();
+            let gridX = (e.nativeEvent.offsetX / canvas.width * this.maze.grid.length) * window.devicePixelRatio;
+            let gridY = (e.nativeEvent.offsetY / canvas.height * this.maze.grid.length) * window.devicePixelRatio;
+
+            const deltaX = gridX - this.lastPointerX;
+            const deltaY = gridY - this.lastPointerY;
+            const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY);
+
+            const steps = Math.ceil(distance); // Number of points to check
+            for (let i = 0; i <= steps; i++) {
+                const interpolatedX = this.lastPointerX + (deltaX / steps) * i;
+                const interpolatedY = this.lastPointerY + (deltaY / steps) * i;
+
+                if (Math.abs(this.maze.path[this.maze.pathIndex].x + 0.5 - interpolatedX) < 1.6 &&
+                    Math.abs(this.maze.path[this.maze.pathIndex].y + 0.5 - interpolatedY) < 1.6) {
+                    this.traversePath();
+                }
             }
+
+            this.lastPointerX = gridX;
+            this.lastPointerY = gridY;
         }
     }
 

@@ -8,11 +8,13 @@ export class Maze {
     private _grid: Cell[][];
     private _path: Point[];
     private _pathIndex: number;
+    private touchControls: boolean;
 
-    constructor(dimension: number) {
+    constructor(dimension: number, touchControls: boolean) {
         this._grid = Array.from({ length: dimension }, () => Array(dimension).fill(Cell.EMPTY));
         this._path = [];
         this._pathIndex = 2;
+        this.touchControls = touchControls;
         this.generate();
     }
 
@@ -46,12 +48,13 @@ export class Maze {
         let current: Point = { x: 1, y: this._grid.length - 2 }; //account for the outer walls
 
         //prevent from generating on timer area
-        for (let x = 15; x < 22; x++) {
-            for (let y = 17; y < 20; y++) {
-                visited[x][y] = true;
+        if (!this.touchControls) {
+            for (let x = 15; x < 22; x++) {
+                for (let y = 17; y < 20; y++) {
+                    visited[x][y] = true;
+                }
             }
         }
-
         this._grid[current.x][current.y + 1] = Cell.PATH_TAKEN;
         this._path.push({ x: current.x, y: current.y + 1 });
         this._grid[current.x][current.y] = Cell.PATH_TAKEN;

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import Game from './components/Game'
 import Leaderboard from './components/Leaderboard';
+import TouchGame from './components/TouchGame';
+import MouseGame from './components/MouseGame';
 
 export const HOST = 'https://flamin-finger-backend.fly.dev'
 
@@ -85,7 +86,7 @@ function App() {
       <div className="flex-1 max-w-[100vmin] w-full p-4 gap-4 bg-orange-700 flex flex-col items-center border-l-[8px] border-r-[8px] border-stone-700">
         {showLeaderboard
           ? <Leaderboard />
-          : <Game submitScore={submitScore} />
+          : 'ontouchstart' in window ? <TouchGame submitScore={submitScore} /> : <MouseGame submitScore={submitScore} />
         }
       </div>
     </>
