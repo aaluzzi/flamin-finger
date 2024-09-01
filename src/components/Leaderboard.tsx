@@ -48,20 +48,20 @@ export default function Leaderboard() {
     return (
 
         <div className="h-full w-full p-4 text-[min(32px,5vmin)] text-red-500 font-clock text-center bg-black rounded-xl">
-            <div className="pb-4 flex justify-around">
-                <button className={"text-yellow-400 px-8 " + (selectedType === 'mouse' ? " outline-dotted " : "")}
+            <div className="w-full pb-4 flex justify-around">
+                <button className={"font-bold text-yellow-400 px-8 " + (selectedType === 'mouse' ? " outline-dotted " : "")}
                     onClick={() => setSelectedType('mouse')}>
                     Mouse
                 </button>
-                <button className={"text-yellow-400 px-8 " + (selectedType === 'touch' ? " outline-dotted " : "")}
+                <button className={"font-bold text-yellow-400 px-8 " + (selectedType === 'touch' ? " outline-dotted " : "")}
                     onClick={() => setSelectedType('touch')}>
                     Touch
                 </button>
             </div>
             {selectedLeaderboard.length > 0
-                ? <table>
+                ? <table className="w-full">
                     <thead>
-                        <th>Ranking</th>
+                        <th>Rank</th>
                         <th>Username</th>
                         <th>Score</th>
                         <th>Date</th>
