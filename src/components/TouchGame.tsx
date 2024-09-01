@@ -24,7 +24,8 @@ export default function TouchGame({ submitScore }: { submitScore: (score: number
                 ref={canvasRef}
                 className="h-[min(90vw,calc(93vh-128px))] p-2 bg-black rounded-xl aspect-square cursor-grab"
                 onClick={game?.handleClick}
-                onPointerMove={game?.handlePointerMove}                   
+                onPointerMove={game?.handlePointerMove}
+                onContextMenu={(e) => e.preventDefault()}               
             />
             <NumberDisplay number={timer} />
         </>

@@ -45,12 +45,12 @@ function App() {
     }
   }
 
-  const submitScore = async (score: number) => {
+  const submitScore = async (type: 'mouse' | 'touch', score: number) => {
     if (score > highscore) {
       setHighscore(score);
       if (localStorage.getItem('token')) {
         try {
-          await fetch(`${HOST}/submit`, {
+          await fetch(`${HOST}/submit/${type}`, {
             method: 'POST',
             headers: {
               'Authorization': `Bearer ${localStorage.getItem('token')}`,
@@ -86,7 +86,7 @@ function App() {
       <div className="flex-1 max-w-[100vmin] w-full p-4 gap-4 bg-orange-700 flex flex-col items-center border-l-[8px] border-r-[8px] border-stone-700">
         {showLeaderboard
           ? <Leaderboard />
-          : 'ontouchstart' in window ? <TouchGame submitScore={submitScore} /> : <MouseGame submitScore={submitScore} />
+          : 'ontouchstart' in window ? <TouchGame submitScore={((score) => submitScore('touch', score))} /> : <MouseGame submitScore={(score) => submitScore('mouse', score)} />
         }
       </div>
     </>
