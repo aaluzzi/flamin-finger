@@ -26,7 +26,6 @@ function App() {
           }
         });
         const json = await resp.json();
-
         if (json.username) {
           localStorage.setItem('user', JSON.stringify(json));
           loadUser();
@@ -41,7 +40,12 @@ function App() {
     if (localStorage.getItem('user')) {
       const user = JSON.parse(localStorage.getItem('user')!);
       setUser(user);
-      setHighscore(Number(user?.highscore) | 0);
+      if ('ontouchstart' in window) {
+        setHighscore(Number(user?.touchHighscore) | 0);
+      } else {
+        setHighscore(Number(user?.mouseHighscore) | 0);
+      }
+     
     }
   }
 
