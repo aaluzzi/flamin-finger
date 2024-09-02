@@ -87,11 +87,13 @@ function App() {
           : <button className="hover:underline"><a href={`${HOST}/login`}>Sign In</a></button>
         }
       </div>
-      <div className="flex-1 max-w-[100vmin] w-full p-4 gap-4 bg-orange-700 flex flex-col items-center border-l-[8px] border-r-[8px] border-stone-700">
+      <div className="flex-1 max-w-[100vmin] w-full p-4 bg-orange-700 border-l-[8px] border-r-[8px] border-stone-700">
         {showLeaderboard
-          ? <Leaderboard />
-          : 'ontouchstart' in window ? <TouchGame submitScore={((score) => submitScore('touch', score))} /> : <MouseGame submitScore={(score) => submitScore('mouse', score)} />
+          ? <Leaderboard /> : null
         }
+        <div className={"flex flex-col items-center gap-4 " + (showLeaderboard ? "hidden" : "")}>
+          {'ontouchstart' in window ? <TouchGame submitScore={((score) => submitScore('touch', score))} /> : <MouseGame submitScore={(score) => submitScore('mouse', score)} /> }
+        </div>
       </div>
     </>
   )
