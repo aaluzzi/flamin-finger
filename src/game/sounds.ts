@@ -13,8 +13,7 @@ async function getAudioBuffer(url: string) {
     return buffer;
 }
 
-async function loadSounds() {
-    // Load sounds concurrently
+export async function loadSounds() {
     const [menuSongBuffer, traverseSound, switchSound, mazeSongBuffers, startSounds, endSounds] = await Promise.all([
         getAudioBuffer('/audio/music/menu.mp3'),
         getAudioBuffer('/audio/sounds/traverse.wav'),
@@ -63,7 +62,7 @@ export function stopMenuMusic() {
 
 export function playMazeMusic() {
     const songIndex = Math.floor(Math.random() * MAZE_SONGS.buffers.length);
-    MAZE_SONGS.playing = playSound(MAZE_SONGS.buffers[songIndex], 0.05, true);
+    MAZE_SONGS.playing = playSound(MAZE_SONGS.buffers[songIndex], 0.04, true);
 }
 
 export function stopMazeMusic() {
@@ -71,7 +70,7 @@ export function stopMazeMusic() {
 }
 
 export function playTraverseSound() {
-    playSound(TRAVERSE_SOUND, 0.04);
+    playSound(TRAVERSE_SOUND, 0.02);
 }
 
 export function playSwitchSound() {
@@ -80,12 +79,10 @@ export function playSwitchSound() {
 
 export function playStartSound() {
     const index = Math.floor(Math.random() * START_SOUNDS.length);
-    playSound(START_SOUNDS[index], 0.10);
+    playSound(START_SOUNDS[index], 0.05);
 }
 
 export function playEndSound() {
     const index = Math.floor(Math.random() * END_SOUNDS.length);
-    playSound(END_SOUNDS[index], 0.10);
+    playSound(END_SOUNDS[index], 0.05);
 }
-
-loadSounds();

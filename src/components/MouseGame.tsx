@@ -2,7 +2,7 @@ import { useRef, useEffect, useState } from 'react';
 import { Game } from '../game/game';
 import NumberDisplay from './NumberDisplay';
 import { Graphics } from '../game/graphics';
-import { stopMenuMusic } from '../game/sounds';
+import { loadSounds } from '../game/sounds';
 
 const MOUSE_DIMENSION = 37;
 
@@ -12,12 +12,14 @@ export default function MouseGame({ submitScore }: { submitScore: (score: number
     const [score, setScore] = useState(0);
 
     useEffect(() => {
-        const graphics = new Graphics(canvasRef.current!, MOUSE_DIMENSION);
-        setGame(new Game(graphics, MOUSE_DIMENSION, setScore, submitScore, false));
-
-        return () => {
-            stopMenuMusic();
+        const load = async () => {
+            const graphics = new Graphics(canvasRef.current!, MOUSE_DIMENSION);
+            await loadSounds();
+            setGame(new Game(graphics, MOUSE_DIMENSION, setScore, submitScore, false));
         }
+        
+        load();
+
     }, []);
 
     return (
