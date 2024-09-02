@@ -41,11 +41,11 @@ function App() {
     if (localStorage.getItem('user')) {
       const user = JSON.parse(localStorage.getItem('user')!);
       setUser(user);
-      checkHighscores(user);
+      syncHighscores(user);
     }
   }
 
-  const checkHighscores = (user: any) => {
+  const syncHighscores = (user: any) => {
     const localMouseHighscore = Number(localStorage.getItem('mouseHighscore')) ?? 0;
     if (localMouseHighscore > user.mouseHighscore) {
       submitScore('mouse', localMouseHighscore);
@@ -57,13 +57,15 @@ function App() {
     if (localTouchHighscore > user.touchHighscore) {
       submitScore('touch', localTouchHighscore);
     } else {
-      localStorage.setItem('touchHighscore', user.mouseHighscore);
+      localStorage.setItem('touchHighscore', user.touchHighscore);
     }
+  }
 
+  const loadHighscores = () => {
     if ('ontouchstart' in window) {
-      setHighscore(Number(localStorage.getItem('touchHighscore')));
+      setHighscore(Number(localStorage.getItem('touchHighscore')) ?? 0);
     } else {
-      setHighscore(Number(localStorage.getItem('mouseHighscore')));
+      setHighscore(Number(localStorage.getItem('mouseHighscore')) ?? 0);
     }
   }
 
@@ -90,6 +92,7 @@ function App() {
   useEffect(() => {
     loadUser();
     fetchUserInfo();
+    loadHighscores();
   }, []);
 
   return (
@@ -111,7 +114,9 @@ function App() {
           ? <Leaderboard /> : null
         }
         <div className={"flex flex-col items-center gap-4 " + (showLeaderboard ? "hidden" : "")}>
-          {'ontouchstart' in window ? <TouchGame submitScore={((score) => submitScore('touch', score))} /> : <MouseGame submitScore={(score) => submitScore('mouse', score)} /> }
+          {'ontouchstart' in window
+            ? <TouchGame highscore={highscore} submitScore={((score) => submitScore('touch', score))} />
+            : <MouseGame highscore={highscore} submitScore={(score) => submitScore('mouse', score)} />}
         </div>
       </div>
     </>

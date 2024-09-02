@@ -3,10 +3,11 @@ import { Game } from '../game/game';
 import NumberDisplay from './NumberDisplay';
 import { Graphics } from '../game/graphics';
 import { loadSounds } from '../game/sounds';
+import { ScoresDisplay } from './ScoresDisplay';
 
 const TOUCH_DIMENSION = 19;
 
-export default function TouchGame({ submitScore }: { submitScore: (score: number) => void }) {
+export default function TouchGame({ highscore, submitScore }: { highscore: number, submitScore: (score: number) => void }) {
     const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const [game, setGame] = useState<Game | null>(null);
     const [score, setScore] = useState(0);
@@ -25,15 +26,15 @@ export default function TouchGame({ submitScore }: { submitScore: (score: number
 
     return (
         <>
-            <NumberDisplay number={score} />
+            <ScoresDisplay score={score} highscore={highscore} />
             <canvas
                 ref={canvasRef}
                 className="h-[min(90vw,calc(93vh-128px))] p-2 bg-black rounded-xl aspect-square cursor-grab"
                 onClick={game?.handleClick}
                 onPointerMove={game?.handlePointerMove}
-                onContextMenu={(e) => e.preventDefault()}               
+                onContextMenu={(e) => e.preventDefault()}
             />
-            <NumberDisplay number={timer} />
+            <NumberDisplay number={timer} color="red-500" />
         </>
     );
 }
