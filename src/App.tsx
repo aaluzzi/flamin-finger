@@ -13,6 +13,7 @@ function App() {
 
   const fetchUserInfo = async () => {
     const searchParams = new URLSearchParams(window.location.search);
+    //JWT from OAuth2
     if (searchParams.has('token')) {
       localStorage.setItem('token', searchParams.get('token')!);
     }
@@ -40,18 +41,36 @@ function App() {
     if (localStorage.getItem('user')) {
       const user = JSON.parse(localStorage.getItem('user')!);
       setUser(user);
-      if ('ontouchstart' in window) {
-        setHighscore(Number(user?.touchHighscore) | 0);
-      } else {
-        setHighscore(Number(user?.mouseHighscore) | 0);
-      }
-     
+      checkHighscores(user);
+    }
+  }
+
+  const checkHighscores = (user: any) => {
+    const localMouseHighscore = Number(localStorage.getItem('mouseHighscore')) ?? 0;
+    if (localMouseHighscore > user.mouseHighscore) {
+      submitScore('mouse', localMouseHighscore);
+    } else {
+      localStorage.setItem('mouseHighscore', user.mouseHighscore);
+    }
+
+    const localTouchHighscore = Number(localStorage.getItem('touchHighscore')) ?? 0;
+    if (localTouchHighscore > user.touchHighscore) {
+      submitScore('touch', localTouchHighscore);
+    } else {
+      localStorage.setItem('touchHighscore', user.mouseHighscore);
+    }
+
+    if ('ontouchstart' in window) {
+      setHighscore(Number(localStorage.getItem('touchHighscore')));
+    } else {
+      setHighscore(Number(localStorage.getItem('mouseHighscore')));
     }
   }
 
   const submitScore = async (type: 'mouse' | 'touch', score: number) => {
     if (score > highscore) {
       setHighscore(score);
+      localStorage.setItem(`${type}Highscore`, score.toString());
       if (localStorage.getItem('token')) {
         try {
           await fetch(`${HOST}/submit/${type}`, {
