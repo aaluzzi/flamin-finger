@@ -34,7 +34,7 @@ export class Game {
             this.graphics.drawTimer(this.timerLengthSeconds - ((Date.now() - this.mazeStartTime) / 1000));
         } else if (this.status === 'starting') {
             this.graphics.beginGridAnimation();
-            this.graphics.animateGridDraw(timestamp, this.maze.grid, 15)
+            this.graphics.animateGridDraw(timestamp, this.maze.grid, 20)
             if (this.graphics.gridAnimationFinished()) {
                 this.status = 'running';
                 this.mazeStartTime = Date.now();
