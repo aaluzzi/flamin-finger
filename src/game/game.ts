@@ -16,15 +16,12 @@ export class Game {
     private timerLengthSeconds: number = 0;
     private mazeTimerId: number = 0;
     private mazeStartTime: number = Date.now();
-    private touchControls: boolean;
 
     constructor(graphics: Graphics, dimension: number, setElementScore: (score: number) => void, submitScore: (score: number) => void, touchControls: boolean) {
         this.status = 'menu';
         this.maze = new Maze(dimension, touchControls);
         this.graphics = graphics;
         this.graphics.drawMenu();
-
-        this.touchControls = touchControls;
 
         this.setElementScore = setElementScore;
         this.submitScore = submitScore;
@@ -105,8 +102,7 @@ export class Game {
 
     traversePath = () => {
         this.maze.traverseByOne();
-        //disable sound for now (laggy on IOS)
-        if (this.maze.pathIndex % 2 === 0 && !this.touchControls) {
+        if (this.maze.pathIndex % 2 === 0) {
             playTraverseSound();
         }
 

@@ -1,66 +1,91 @@
-const MENU_SONG = new Audio('/audio/music/menu.mp3');
-MENU_SONG.volume = 0.10;
-const GAME_SONGS: HTMLAudioElement[] = [];
+const audioContext = new window.AudioContext();
+let TRAVERSE_SOUND: AudioBuffer;
+let SWITCH_SOUND: AudioBuffer;
+let MENU_SONG: { buffer: AudioBuffer | null, playing: AudioBufferSourceNode | null } = {buffer: null, playing: null};
+const MAZE_SONGS: { buffers: AudioBuffer[], playing: AudioBufferSourceNode | null } = { buffers: [], playing: null };
+let START_SOUNDS: AudioBuffer[];
+let END_SOUNDS: AudioBuffer[];
 
-const TRAVERSE = new Audio('/audio/sounds/traverse.wav');
-TRAVERSE.volume = 0.05;
-const SWITCH = new Audio('/audio/sounds/switch.wav');
-SWITCH.volume = 0.15;
-
-const STARTS: HTMLAudioElement[] = [];
-const ENDS: HTMLAudioElement[] = [];
-
-for (let i = 0; i < 3; i++) {
-    GAME_SONGS[i] = new Audio(`/audio/music/maze${i}.mp3`);
-    GAME_SONGS[i].volume = 0.10;
-    GAME_SONGS[i].addEventListener('ended', () => {
-        GAME_SONGS[i].play();
-    })
+async function getAudioBuffer(url: string) {
+    const response = await fetch(url);
+    const arrayBuffer = await response.arrayBuffer();
+    const buffer = await audioContext.decodeAudioData(arrayBuffer);
+    return buffer;
 }
 
-for (let i = 0; i < 8; i++) {
-    STARTS[i] = new Audio(`/audio/sounds/start/${i}.wav`);
-    STARTS[i].volume = 0.15;
-    ENDS[i] = new Audio(`/audio/sounds/end/${i}.wav`);
-    ENDS[i].volume = 0.15;
+async function loadSounds() {
+    // Load sounds concurrently
+    const [menuSongBuffer, traverseSound, switchSound, mazeSongBuffers, startSounds, endSounds] = await Promise.all([
+        getAudioBuffer('/audio/music/menu.mp3'),
+        getAudioBuffer('/audio/sounds/traverse.wav'),
+        getAudioBuffer('/audio/sounds/switch.wav'),
+        Promise.all(Array.from({ length: 3 }, (_, i) => getAudioBuffer(`/audio/music/maze${i}.mp3`))),
+        Promise.all(Array.from({ length: 8 }, (_, i) => getAudioBuffer(`/audio/sounds/start/${i}.wav`))),
+        Promise.all(Array.from({ length: 8 }, (_, i) => getAudioBuffer(`/audio/sounds/end/${i}.wav`)))
+    ]);
+
+    MENU_SONG = { buffer: menuSongBuffer, playing: null };
+    TRAVERSE_SOUND = traverseSound;
+    SWITCH_SOUND = switchSound;
+
+    MAZE_SONGS.buffers = mazeSongBuffers;
+
+    START_SOUNDS = startSounds;
+    END_SOUNDS = endSounds;
 }
 
-let songIndex = 0;
-export function playMazeMusic() {
-    songIndex = Math.floor(Math.random() * GAME_SONGS.length);
-    GAME_SONGS[songIndex].currentTime = 0;
-    GAME_SONGS[songIndex].play();
-}
+function playSound(buffer: AudioBuffer, volume: number, loop: boolean=false) {
+    const source = audioContext.createBufferSource();
+    source.buffer = buffer;
 
-export function stopMazeMusic() {
-    GAME_SONGS[songIndex].pause();
+    const gainNode = audioContext.createGain();
+    gainNode.gain.value = volume;
+
+    source.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    source.loop = loop;
+    source.start(0);
+
+    return source;
 }
 
 export function playMenuMusic() {
-    MENU_SONG.currentTime = 0;
-    MENU_SONG.play();
+    if (!MENU_SONG.playing) {
+        MENU_SONG.playing = playSound(MENU_SONG.buffer!, 0.05);
+    }
 }
 
 export function stopMenuMusic() {
-    MENU_SONG.pause();
+    MENU_SONG.playing?.stop();
+    MENU_SONG.playing = null;
+}
+
+export function playMazeMusic() {
+    const songIndex = Math.floor(Math.random() * MAZE_SONGS.buffers.length);
+    MAZE_SONGS.playing = playSound(MAZE_SONGS.buffers[songIndex], 0.05, true);
+}
+
+export function stopMazeMusic() {
+    MAZE_SONGS.playing?.stop();
 }
 
 export function playTraverseSound() {
-    TRAVERSE.currentTime = 0;
-    TRAVERSE.play();
+    playSound(TRAVERSE_SOUND, 0.04);
 }
 
 export function playSwitchSound() {
-    SWITCH.currentTime = 0;
-    SWITCH.play();
+    playSound(SWITCH_SOUND, 0.05);
 }
 
 export function playStartSound() {
-    const index = Math.floor(Math.random() * STARTS.length);
-    STARTS[index].play();
+    const index = Math.floor(Math.random() * START_SOUNDS.length);
+    playSound(START_SOUNDS[index], 0.10);
 }
 
 export function playEndSound() {
-    const index = Math.floor(Math.random() * ENDS.length);
-    ENDS[index].play();
+    const index = Math.floor(Math.random() * END_SOUNDS.length);
+    playSound(END_SOUNDS[index], 0.10);
 }
+
+loadSounds();
