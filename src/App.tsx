@@ -63,9 +63,9 @@ function App() {
 
   const loadHighscores = () => {
     if ('ontouchstart' in window) {
-      setHighscore(Number(localStorage.getItem('touchHighscore')) ?? 0);
+      setHighscore(Number(localStorage.getItem('touchHighscore') ?? 0));
     } else {
-      setHighscore(Number(localStorage.getItem('mouseHighscore')) ?? 0);
+      setHighscore(Number(localStorage.getItem('mouseHighscore') ?? 0));
     }
   }
 
@@ -97,7 +97,7 @@ function App() {
 
   return (
     <>
-      <div className="text-white h-12 w-full py-4 px-6 bg-stone-900 flex justify-between items-center">
+      <div className="text-white h-12 w-full py-4 px-4 bg-stone-900 flex justify-between items-center">
         <button className="hover:underline" onClick={() => setShowLeaderboard(showLeaderboard => !showLeaderboard)}>
           {showLeaderboard ?
             "Back To Game"
@@ -105,7 +105,7 @@ function App() {
           }
         </button>
         {user
-          ? <div>{`${user.name} (${user.username})`}</div>
+          ? <img className="w-8 rounded-full drop-shadow-lg select-none" src={`https://cdn.discordapp.com/avatars/${user.discordId}/${user.avatar}.png`} />
           : <button className="hover:underline"><a href={`${HOST}/login`}>Sign In</a></button>
         }
       </div>
