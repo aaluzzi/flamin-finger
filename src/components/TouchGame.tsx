@@ -15,9 +15,9 @@ export default function TouchGame({ highscore, submitScore }: { highscore: numbe
 
     useEffect(() => {
         const load = async () => {
+            await loadSounds();
             const graphics = new Graphics(canvasRef.current!, TOUCH_DIMENSION);
             graphics.drawTimer = (timeLeft: number) => setTimer(timeLeft.toFixed(1).padStart(4, '0'));
-            await loadSounds();
             setGame(new Game(graphics, TOUCH_DIMENSION, setScore, submitScore, true));
         }
 

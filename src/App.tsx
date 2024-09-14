@@ -90,6 +90,9 @@ function App() {
   }
 
   useEffect(() => {
+    const clockFont = new FontFace('Clock', 'url(/clock.ttf)');
+		clockFont.load().then((font) => document.fonts.add(font));
+    
     loadUser();
     fetchUserInfo();
     loadHighscores();

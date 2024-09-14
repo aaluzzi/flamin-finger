@@ -25,9 +25,6 @@ export class Graphics {
 		this.cursorRow = dimension - 1;
 		this.cursorCol = 0;
 		this.SQUARE_SIZE = canvas.width / dimension;
-
-		const clockFont = new FontFace('Clock', 'url(/clock.ttf)');
-		clockFont.load().then((font) => document.fonts.add(font));
 	}
 
 	getCanvas() {
