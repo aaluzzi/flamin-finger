@@ -70,29 +70,32 @@ function App() {
   }
 
   const submitScore = async (type: 'mouse' | 'touch', score: number) => {
-    if (score > highscore) {
-      setHighscore(score);
-      localStorage.setItem(`${type}Highscore`, score.toString());
-      if (localStorage.getItem('token')) {
-        try {
-          await fetch(`${HOST}/submit/${type}`, {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${localStorage.getItem('token')}`,
-              'score': score.toString(),
-            }
-          });
-        } catch (err) {
-          console.error(err);
+    setHighscore(prevHighscore => {
+      if (score > prevHighscore) {
+        localStorage.setItem(`${type}Highscore`, score.toString());
+        if (localStorage.getItem('token')) {
+          try {
+            fetch(`${HOST}/submit/${type}`, {
+              method: 'POST',
+              headers: {
+                'Authorization': `Bearer ${localStorage.getItem('token')}`,
+                'score': score.toString(),
+              }
+            });
+          } catch (err) {
+            console.error(err);
+          }
         }
+        return score;
       }
-    }
+      return prevHighscore;
+    });
   }
 
   useEffect(() => {
     const clockFont = new FontFace('Clock', 'url(/clock.ttf)');
-		clockFont.load().then((font) => document.fonts.add(font));
-    
+    clockFont.load().then((font) => document.fonts.add(font));
+
     loadUser();
     fetchUserInfo();
     loadHighscores();
