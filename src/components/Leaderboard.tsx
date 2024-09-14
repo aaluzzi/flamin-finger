@@ -47,7 +47,7 @@ export default function Leaderboard() {
 
     return (
 
-        <div className="h-full w-full p-4 text-[min(32px,5vmin)] text-red-500 font-clock text-center bg-black rounded-xl">
+        <div className="h-full w-full p-4 text-[min(48px,7vmin)] text-red-500 font-clock text-center bg-black rounded-xl">
             <div className="w-full pb-4 flex justify-around">
                 <button className={"font-bold text-yellow-400 px-8 " + (selectedType === 'mouse' ? " outline-dotted " : "")}
                     onClick={() => setSelectedType('mouse')}>
@@ -59,27 +59,24 @@ export default function Leaderboard() {
                 </button>
             </div>
             {selectedLeaderboard.length > 0
-                ? <table className="w-full">
+                ? <table className="w-full table-fixed">
                     <thead>
-                        <th>Rank</th>
-                        <th>Username</th>
-                        <th>Score</th>
-                        <th>Date</th>
+                        <th className="w-1/4">Rank</th>
+                        <th className="w-1/2">Username</th>
+                        <th className="w-1/4">Score</th>
                     </thead>
                     <tbody>
                         {selectedType === 'mouse' ? leaderboard.mouse.map((user, index) =>
                             <tr>
                                 <td>{index + 1}</td>
                                 <td>{user.username}</td>
-                                <td>{user.highscore}</td>
-                                <td>{new Date(user.highscoreDate).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: '2-digit' })}</td>
+                                <td >{user.highscore}</td>
                             </tr>
                         ) : leaderboard.touch.map((user, index) =>
                             <tr>
-                                <td>{index + 1}</td>
+                                <td >{index + 1}</td>
                                 <td>{user.username}</td>
                                 <td>{user.highscore}</td>
-                                <td>{new Date(user.highscoreDate).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: '2-digit' })}</td>
                             </tr>
                         )}
                     </tbody>
